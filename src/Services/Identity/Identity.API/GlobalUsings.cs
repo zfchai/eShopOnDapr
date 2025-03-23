@@ -1,5 +1,6 @@
 ﻿global using Dapr.Client;
 global using Dapr.Extensions.Configuration;
+global using Duende.IdentityModel;
 global using Duende.IdentityServer;
 global using Duende.IdentityServer.Configuration;
 global using Duende.IdentityServer.Events;
@@ -9,7 +10,7 @@ global using Duende.IdentityServer.Services;
 global using Duende.IdentityServer.Stores;
 global using Duende.IdentityServer.Validation;
 global using HealthChecks.UI.Client;
-global using IdentityModel;
+//global using IdentityModel;
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Authentication;
 global using Microsoft.AspNetCore.Diagnostics.HealthChecks;
