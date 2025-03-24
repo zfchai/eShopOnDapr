@@ -9,7 +9,7 @@
     <None Include="docker-compose.override.yaml">
       <DependentUpon>docker-compose.yaml</DependentUpon>
     </None>
-    <None Include="docker-compose.yml" />
+    <None Include="docker-compose.yaml" />
     <None Include=".dockerignore" />
     <None Include=".env" />
   </ItemGroup>
