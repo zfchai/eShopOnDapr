@@ -1,0 +1,136 @@
+version: '3.8'
+
+services:
+
+  maildev:
+    image: maildev/maildev:latest
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+
+  redis:
+    image: redis:alpine
+
+  seq:
+    image: datalust/seq:latest
+
+  # Use the Azure SQL Edge version so we can also run on Apple Sillicon (thanks @ChristianWeyer)
+  sqldata:
+    image: mcr.microsoft.com/azure-sql-edge
+
+  zipkin:
+    image: openzipkin/zipkin-slim:latest
+
+  basket-api:
+    image: ${REGISTRY:-eshopdapr}/basket.api:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Services/Basket/Basket.API/Dockerfile
+    depends_on:
+      - identity-api
+      - redis
+
+  basket-api-dapr:
+    image: "daprio/daprd:1.15.2"
+    network_mode: "service:basket-api"
+    depends_on:
+      - basket-api
+
+  blazor-client:
+    image: ${REGISTRY:-eshopdapr}/blazor.client:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Web/BlazorClient.Host/Dockerfile
+
+  catalog-api:
+    image: ${REGISTRY:-eshopdapr}/catalog.api:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Services/Catalog/Catalog.API/Dockerfile
+    depends_on:
+      - sqldata
+
+  catalog-api-dapr:
+    image: "daprio/daprd:1.15.2"
+    network_mode: "service:catalog-api"
+    depends_on:
+      - catalog-api
+
+  identity-api:
+    image: ${REGISTRY:-eshopdapr}/identity.api:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Services/Identity/Identity.API/Dockerfile
+    depends_on:
+      - sqldata
+
+  identity-api-dapr:
+    image: "daprio/daprd:1.15.2"
+    network_mode: "service:identity-api"
+    depends_on:
+      - identity-api
+
+  ordering-api:
+    image: ${REGISTRY:-eshopdapr}/ordering.api:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Services/Ordering/Ordering.API/Dockerfile
+    depends_on:
+      - sqldata
+
+  ordering-api-dapr:
+    image: "daprio/daprd:1.15.2"
+    network_mode: "service:ordering-api"
+    depends_on:
+      - ordering-api
+
+  payment-api:
+    image: ${REGISTRY:-eshopdapr}/payment.api:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Services/Payment/Payment.API/Dockerfile
+
+  payment-api-dapr:
+    image: "daprio/daprd:1.15.2"
+    network_mode: "service:payment-api"
+    depends_on:
+      - payment-api
+
+  webshoppingagg:
+    image: ${REGISTRY:-eshopdapr}/webshoppingagg:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/ApiGateways/Aggregators/Web.Shopping.HttpAggregator/Dockerfile
+    depends_on:
+      - basket-api
+      - catalog-api
+      - identity-api
+      - ordering-api
+      - sqldata
+
+  webshoppingagg-dapr:
+    image: "daprio/daprd:1.15.2"
+    network_mode: "service:webshoppingagg"
+    depends_on:
+      - webshoppingagg
+
+  webshoppingapigw:
+    image: ${REGISTRY:-eshopdapr}/webshoppingapigw:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/ApiGateways/Envoy/Dockerfile
+
+  webshoppingapigw-dapr:
+    image: "daprio/daprd:1.15.2"
+    network_mode: "service:webshoppingapigw"
+    depends_on:
+      - webshoppingapigw
+
+  webstatus:
+    image: ${REGISTRY:-eshopdapr}/webstatus:${TAG:-latest}
+    build:
+      context: .
+      dockerfile: src/Web/WebStatus/Dockerfile
+
+  dapr-placement:
+    image: "daprio/dapr:1.15.2"
