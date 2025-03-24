@@ -2,7 +2,7 @@
 
 > Find new samples for Dapr and .NET on the official [Dapr website](https://dapr.io) and on the [Dapr GitHub](https://github.com/dapr). Additionally, be sure to see the [Azure Container Apps Landing Zone](https://techcommunity.microsoft.com/t5/apps-on-azure-blog/announcing-landing-zone-accelerator-for-azure-container-apps/ba-p/3843989) with Dapr support.
 
-A sample .NET Core distributed application based on *[eShopOnContainers](https://github.com/dotnet-architecture/eShopOnContainers)*, powered by [Dapr](https://dapr.io/). The current version targets .NET 7.
+A sample .NET Core distributed application based on *[eShopOnContainers](https://github.com/dotnet-architecture/eShopOnContainers)*, powered by [Dapr](https://dapr.io/). The current version targets .NET 8.
 
 The accompanying e-book **Dapr for .NET developers** uses the sample code in this repository to demonstrate Dapr features and benefits. You can [read the online version](https://docs.microsoft.com/dotnet/architecture/dapr-for-net-developers/) and [download the PDF](https://aka.ms/dapr-ebook) for free.
 
@@ -11,13 +11,13 @@ The accompanying e-book **Dapr for .NET developers** uses the sample code in thi
 Dapr enables developers using any language or framework to easily write microservices. It addresses many of the challenges found that come along with distributed applications, such as:
 
 - How can distributed services discover each other and communicate synchronously?
-- How can they implement asynchronous messaging? 
+- How can they implement asynchronous messaging?
 - How can they maintain contextual information across a transaction?
 - How can they become resilient to failure?
 - How can they scale to meet fluctuating demand?
 - How are they monitored and observed?
 
-eShopOnDapr evolves (or, *Daprizes*, if you will) the earlier eShopOnContainers application by integrating Dapr building blocks and components: 
+eShopOnDapr evolves (or, *Daprizes*, if you will) the earlier eShopOnContainers application by integrating Dapr building blocks and components:
 
 ![eShopOnDapr reference application architecture.](./docs/media/buildingblocks.png)
 
