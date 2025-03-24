@@ -14,9 +14,8 @@
         // Deduplicate when the same parameter value is set multiple times.
         if (OrderState is not null && OrderState != _prevOrderState)
         {
-            _toastService.ShowInfo(
-                $"Your order status has been updated to \"{OrderState.Status}\".",
-                $"Order #{OrderState.OrderNumber}");
+            string message = $"Your order #{OrderState.OrderNumber} status has been updated to \"{OrderState.Status}\".";
+            _toastService.ShowInfo(message);
 
             _prevOrderState = OrderState;
         }
