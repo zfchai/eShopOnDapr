@@ -10,7 +10,7 @@ public class BasketController(ILogger<BasketController> logger, IServiceProvider
     private readonly IEventBus _eventBus = sp.GetRequiredService<IEventBus>();
 
     [HttpGet]
-    [ProducesResponseType(typeof(CustomerBasket), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(CustomerBasket), StatusCodes.Status200OK)]
     public async Task<ActionResult<CustomerBasket>> GetBasketAsync()
     {
         var userId = _identityService.GetUserIdentity();
@@ -20,7 +20,7 @@ public class BasketController(ILogger<BasketController> logger, IServiceProvider
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(CustomerBasket), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(CustomerBasket), StatusCodes.Status200OK)]
     public async Task<ActionResult<CustomerBasket>> UpdateBasketAsync([FromBody] CustomerBasket value)
     {
         var userId = _identityService.GetUserIdentity();
@@ -31,8 +31,8 @@ public class BasketController(ILogger<BasketController> logger, IServiceProvider
     }
 
     [HttpPost("checkout")]
-    [ProducesResponseType((int)HttpStatusCode.Accepted)]
-    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> CheckoutAsync(
         [FromBody] BasketCheckout basketCheckout,
         [FromHeader(Name = "X-Request-Id")] string requestId)
@@ -72,7 +72,7 @@ public class BasketController(ILogger<BasketController> logger, IServiceProvider
 
     // DELETE api/values/5
     [HttpDelete]
-    [ProducesResponseType(typeof(void), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
     public async Task DeleteBasketAsync()
     {
         var userId = _identityService.GetUserIdentity();

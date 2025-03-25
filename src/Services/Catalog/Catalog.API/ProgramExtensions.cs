@@ -50,7 +50,7 @@ public static class ProgramExtensions
             .AddSqlServer(
                 builder.Configuration["ConnectionStrings:CatalogDB"]!,
                 name: "CatalogDB-check",
-                tags: new [] { "catalogdb" });
+                tags: ["catalogdb"]);
 
     public static void AddCustomApplicationServices(this WebApplicationBuilder builder)
     {
@@ -61,8 +61,6 @@ public static class ProgramExtensions
 
     public static void AddCustomDatabase(this WebApplicationBuilder builder)
     {
-
-
         builder.Services.AddDbContext<CatalogDbContext>(
             options => options.UseSqlServer(builder.Configuration["ConnectionStrings:CatalogDB"]!));
     }

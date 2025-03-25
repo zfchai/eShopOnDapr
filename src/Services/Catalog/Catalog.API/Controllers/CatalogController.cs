@@ -13,17 +13,17 @@ public class CatalogController : ControllerBase
     }
 
     [HttpGet("brands")]
-    [ProducesResponseType(typeof(List<CatalogBrand>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(List<CatalogBrand>), StatusCodes.Status200OK)]
     public Task<List<CatalogBrand>> CatalogBrandsAsync() =>
         _context.CatalogBrands.ToListAsync();
 
     [HttpGet("types")]
-    [ProducesResponseType(typeof(List<CatalogType>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(List<CatalogType>), StatusCodes.Status200OK)]
     public Task<List<CatalogType>> CatalogTypesAsync() =>
         _context.CatalogTypes.ToListAsync();
 
     [HttpGet("items/by_ids")]
-    [ProducesResponseType(typeof(List<CatalogItem>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(List<CatalogItem>), StatusCodes.Status200OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
     public async Task<ActionResult<List<CatalogItem>>> ItemsAsync([FromQuery] string ids)
     {
@@ -51,7 +51,7 @@ public class CatalogController : ControllerBase
     }        
 
     [HttpGet("items/by_page")]
-    [ProducesResponseType(typeof(PaginatedItemsViewModel), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(PaginatedItemsViewModel), StatusCodes.Status200OK)]
     public async Task<PaginatedItemsViewModel> ItemsAsync(
         [FromQuery] int typeId = -1,
         [FromQuery] int brandId = -1,

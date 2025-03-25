@@ -1,26 +1,17 @@
 ﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.IntegrationEvents.EventHandling;
 
-public class OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler : 
+public class OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler(
+    CatalogDbContext context,
+    IEventBus eventBus) : 
     IIntegrationEventHandler<OrderStatusChangedToAwaitingStockValidationIntegrationEvent>
 {
-    private readonly CatalogDbContext _context;
-    private readonly IEventBus _eventBus;
-
-    public OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler(
-        CatalogDbContext context,
-        IEventBus eventBus)
-    {
-        _context = context;
-        _eventBus = eventBus;
-    }
-
     public async Task Handle(OrderStatusChangedToAwaitingStockValidationIntegrationEvent @event)
     {
         var confirmedOrderStockItems = new List<ConfirmedOrderStockItem>();
 
         foreach (var orderStockItem in @event.OrderStockItems)
         {
-            var catalogItem = _context.CatalogItems.Find(orderStockItem.ProductId);
+            var catalogItem = context.CatalogItems.Find(orderStockItem.ProductId);
             if (catalogItem != null)
             {
                 var hasStock = catalogItem.AvailableStock >= orderStockItem.Units;
@@ -37,6 +28,6 @@ public class OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler 
             ? (IntegrationEvent)new OrderStockRejectedIntegrationEvent(@event.OrderId, confirmedOrderStockItems)
             : new OrderStockConfirmedIntegrationEvent(@event.OrderId);
 
-        await _eventBus.PublishAsync(confirmedIntegrationEvent);
+        await eventBus.PublishAsync(confirmedIntegrationEvent);
     }
 }
