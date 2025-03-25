@@ -3,23 +3,18 @@
 [Route("api/v1/[controller]")]
 [Authorize]
 [ApiController]
-public class OrdersController : ControllerBase
+public class OrdersController(
+    IOrderRepository orderRepository,
+    IIdentityService identityService
+    ) : ControllerBase
 {
-    private readonly IOrderRepository _orderRepository;
-    private readonly IIdentityService _identityService;
-
-    public OrdersController(
-        IOrderRepository orderRepository, 
-        IIdentityService identityService)
-    {
-        _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
-        _identityService = identityService ?? throw new ArgumentNullException(nameof(identityService));
-    }
+    private readonly IOrderRepository _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
+    private readonly IIdentityService _identityService = identityService ?? throw new ArgumentNullException(nameof(identityService));
 
     [Route("{orderNumber:int}/cancel")]
     [HttpPut]
-    [ProducesResponseType((int)HttpStatusCode.OK)]
-    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CancelOrderAsync(int orderNumber)
     {
         var orderingProcessActor = await GetOrderingProcessActorAsync(orderNumber);
@@ -35,8 +30,8 @@ public class OrdersController : ControllerBase
 
     [Route("{orderNumber:int}/ship")]
     [HttpPut]
-    [ProducesResponseType((int)HttpStatusCode.OK)]
-    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ShipOrderAsync(int orderNumber, [FromHeader(Name = "x-requestid")] string requestId)
     {
         bool result = false;
@@ -57,8 +52,8 @@ public class OrdersController : ControllerBase
 
     [Route("{orderNumber:int}")]
     [HttpGet]
-    [ProducesResponseType(typeof(Model.Order),(int)HttpStatusCode.OK)]
-    [ProducesResponseType((int)HttpStatusCode.NotFound)]
+    [ProducesResponseType(typeof(Order), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> GetOrderAsync(int orderNumber)
     {
         var buyerId = _identityService.GetUserIdentity();
@@ -74,7 +69,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<OrderSummary>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(IEnumerable<OrderSummary>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<OrderSummary>>> GetOrdersAsync()
     {
         var buyerId = _identityService.GetUserIdentity();

@@ -101,7 +101,7 @@ public static class ProgramExtensions
             .AddSqlServer(
                 builder.Configuration["ConnectionStrings:OrderingDB"]!,
                 name: "OrderingDB-check",
-                tags: new [] { "orderdb" });
+                tags: ["orderdb"]);
 
     public static void AddCustomApplicationServices(this WebApplicationBuilder builder)
     {

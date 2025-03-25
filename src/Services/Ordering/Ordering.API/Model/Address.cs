@@ -1,11 +1,15 @@
 ﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.Model;
 
-public class Address
+public class Address(
+    string street,
+    string city,
+    string state,
+    string country)
 {
-    public string Street { get; private set; }
-    public string City { get; private set; }
-    public string State { get; private set; }
-    public string Country { get; private set; }
+    public string Street { get; private set; } = street;
+    public string City { get; private set; } = city;
+    public string State { get; private set; } = state;
+    public string Country { get; private set; } = country;
 
     public Address() : this(
         string.Empty,
@@ -13,17 +17,5 @@ public class Address
         string.Empty,
         string.Empty)
     {
-    }
-
-    public Address(
-        string street,
-        string city,
-        string state,
-        string country)
-    {
-        Street = street;
-        City = city;
-        State = state;
-        Country = country;
     }
 }

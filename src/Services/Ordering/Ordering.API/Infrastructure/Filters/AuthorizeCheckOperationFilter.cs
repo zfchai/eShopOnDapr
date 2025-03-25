@@ -18,12 +18,12 @@ public class AuthorizeCheckOperationFilter : IOperationFilter
             Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
         };
 
-        operation.Security = new List<OpenApiSecurityRequirement>
-                {
+        operation.Security =
+                [
                     new OpenApiSecurityRequirement
                     {
-                        [ oAuthScheme ] = new [] { "ordering" }
+                        [ oAuthScheme ] = ["ordering"]
                     }
-                };
+                ];
     }
 }

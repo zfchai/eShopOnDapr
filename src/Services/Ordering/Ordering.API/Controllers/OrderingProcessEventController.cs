@@ -2,20 +2,13 @@
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class OrderingProcessEventController : ControllerBase
+public class OrderingProcessEventController(
+    ILogger<OrderingProcessEventController> logger,
+    IActorProxyFactory actorProxyFactory
+    ) : ControllerBase
 {
     private const string DAPR_PUBSUB_NAME = "eshopondapr-pubsub";
-
-    private readonly IActorProxyFactory _actorProxyFactory;
-    private readonly ILogger<OrderingProcessEventController> _logger;
-
-    public OrderingProcessEventController(
-        IActorProxyFactory actorProxyFactory,
-        ILogger<OrderingProcessEventController> logger)
-    {
-        _actorProxyFactory = actorProxyFactory;
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly ILogger<OrderingProcessEventController> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     [HttpPost("UserCheckoutAccepted")]
     [Topic(DAPR_PUBSUB_NAME, "UserCheckoutAcceptedIntegrationEvent")]
@@ -75,7 +68,7 @@ public class OrderingProcessEventController : ControllerBase
     private IOrderingProcessActor GetOrderingProcessActor(Guid orderId)
     {
         var actorId = new ActorId(orderId.ToString());
-        return _actorProxyFactory.CreateActorProxy<IOrderingProcessActor>(
+        return actorProxyFactory.CreateActorProxy<IOrderingProcessActor>(
             actorId,
             nameof(OrderingProcessActor));
     }

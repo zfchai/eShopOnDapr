@@ -2,16 +2,16 @@
 
 public class OrderItemEntityTypeConfiguration : IEntityTypeConfiguration<OrderItem>
 {
-    public void Configure(EntityTypeBuilder<OrderItem> orderItemConfiguration)
+    public void Configure(EntityTypeBuilder<OrderItem> builder)
     {
-        orderItemConfiguration.ToTable("OrderItems");
+        builder.ToTable("OrderItems");
 
-        orderItemConfiguration.HasKey(o => o.Id);
+        builder.HasKey(o => o.Id);
 
-        orderItemConfiguration.Property(o => o.Id)
+        builder.Property(o => o.Id)
             .UseHiLo("orderitemseq");
 
-        orderItemConfiguration.Property(item => item.UnitPrice)
+        builder.Property(item => item.UnitPrice)
             .HasPrecision(4, 2);
     }
 }

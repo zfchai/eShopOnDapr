@@ -2,18 +2,18 @@
     
 public class OrderEntityTypeConfiguration : IEntityTypeConfiguration<Order>
 {
-    public void Configure(EntityTypeBuilder<Order> orderConfiguration)
+    public void Configure(EntityTypeBuilder<Order> builder)
     {
-        orderConfiguration.ToTable("Orders");
+        builder.ToTable("Orders");
 
-        orderConfiguration.HasKey(o => o.Id);
+        builder.HasKey(o => o.Id);
 
-        orderConfiguration.HasAlternateKey(o => o.OrderNumber);
+        builder.HasAlternateKey(o => o.OrderNumber);
 
-        orderConfiguration.Property(o => o.OrderNumber)
+        builder.Property(o => o.OrderNumber)
             .UseHiLo("orderseq");
 
-        orderConfiguration
+        builder
             .OwnsOne(o => o.Address, a =>
             {
                 a.WithOwner();

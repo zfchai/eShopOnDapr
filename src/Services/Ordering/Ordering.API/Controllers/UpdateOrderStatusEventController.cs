@@ -2,26 +2,19 @@
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class UpdateOrderStatusEventController : ControllerBase
+public class UpdateOrderStatusEventController(
+    ILogger<UpdateOrderStatusEventController> logger,
+    IOrderRepository orderRepository,
+    IHubContext<NotificationsHub> hubContext,
+    IActorProxyFactory actorProxyFactory
+    ) : ControllerBase
 {
     private const string DAPR_PUBSUB_NAME = "eshopondapr-pubsub";
 
-    private readonly IOrderRepository _orderRepository;
-    private readonly IHubContext<NotificationsHub> _hubContext;
-    private readonly IActorProxyFactory _actorProxyFactory;
-    private readonly ILogger<UpdateOrderStatusEventController> _logger;
-
-    public UpdateOrderStatusEventController(
-        IOrderRepository orderRepository,
-        IHubContext<NotificationsHub> hubContext,
-        IActorProxyFactory actorProxyFactory,
-        ILogger<UpdateOrderStatusEventController> logger)
-    {
-        _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
-        _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
-        _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly IOrderRepository _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
+    private readonly IHubContext<NotificationsHub> _hubContext = hubContext ?? throw new ArgumentNullException(nameof(hubContext));
+    private readonly IActorProxyFactory _actorProxyFactory = actorProxyFactory ?? throw new ArgumentNullException(nameof(actorProxyFactory));
+    private readonly ILogger<UpdateOrderStatusEventController> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     [HttpPost("OrderStatusChangedToSubmitted")]
     [Topic(DAPR_PUBSUB_NAME, nameof(OrderStatusChangedToSubmittedIntegrationEvent))]

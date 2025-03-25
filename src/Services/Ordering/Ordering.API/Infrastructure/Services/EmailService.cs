@@ -1,27 +1,18 @@
 ﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Services;
 
-public class EmailService : IEmailService
+public class EmailService(ILogger<EmailService> logger, DaprClient daprClient) : IEmailService
 {
     private const string SendMailBinding = "sendmail";
     private const string CreateBindingOperation = "create";
 
-    private readonly DaprClient _daprClient;
-    private readonly ILogger<EmailService> _logger;
-
-    public EmailService(DaprClient daprClient, ILogger<EmailService> logger)
-    {
-        _daprClient = daprClient;
-        _logger = logger;
-    }
-
     public Task SendOrderConfirmationAsync(Order order)
     {
-        _logger.LogInformation("Sending order confirmation email for order {OrderId} to {BuyerEmail}.",
+        logger.LogInformation("Sending order confirmation email for order {OrderId} to {BuyerEmail}.",
             order.Id, order.BuyerEmail);
 
         var message = CreateEmailBody(order);
 
-        return _daprClient.InvokeBindingAsync(
+        return daprClient.InvokeBindingAsync(
             SendMailBinding,
             CreateBindingOperation,
             message,
