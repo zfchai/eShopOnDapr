@@ -1,14 +1,7 @@
 ﻿namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Services;
 
-public class BasketService : IBasketService
+public class BasketService(HttpClient httpClient) : IBasketService
 {
-    private readonly HttpClient _httpClient;
-
-    public BasketService(HttpClient httpClient)
-    {
-        _httpClient = httpClient;
-    }
-
     public async Task UpdateAsync(BasketData currentBasket, string accessToken)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, "api/v1/basket")
@@ -18,7 +11,7 @@ public class BasketService : IBasketService
 
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-        var response = await _httpClient.SendAsync(request);
+        var response = await httpClient.SendAsync(request);
         response.EnsureSuccessStatusCode();
     }
 }
