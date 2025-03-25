@@ -39,9 +39,9 @@ public static class ProgramExtensions
                         AuthorizationUrl = new Uri($"{identityUrlExternal}/connect/authorize"),
                         TokenUrl = new Uri($"{identityUrlExternal}/connect/token"),
                         Scopes = new Dictionary<string, string>()
-                            {
-                                { "shoppingaggr-api", AppName }
-                            }
+                        {
+                            { "shoppingaggr-api", AppName }
+                        }
                     }
                 }
             });

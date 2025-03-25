@@ -3,16 +3,10 @@
 [Route("api/v1/[controller]")]
 [Authorize]
 [ApiController]
-public class BasketController : ControllerBase
+public class BasketController(IServiceProvider sp) : ControllerBase
 {
-    private readonly ICatalogService _catalog;
-    private readonly IBasketService _basket;
-
-    public BasketController(ICatalogService catalogService, IBasketService basketService)
-    {
-        _catalog = catalogService;
-        _basket = basketService;
-    }
+    private readonly ICatalogService _catalog = sp.GetRequiredService<ICatalogService>();
+    private readonly IBasketService _basket = sp.GetRequiredService<IBasketService>();
 
     [HttpPost]
     [HttpPut]
