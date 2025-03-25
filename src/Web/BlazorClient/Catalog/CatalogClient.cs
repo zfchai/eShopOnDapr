@@ -1,15 +1,8 @@
 ﻿namespace Microsoft.eShopOnDapr.BlazorClient.Catalog;
 
-public class CatalogClient
+public class CatalogClient(HttpClient httpClient)
 {
     private const int PageSize = 12;
-
-    private readonly HttpClient httpClient;
-
-    public CatalogClient(HttpClient httpClient)
-    {
-        this.httpClient = httpClient;
-    }
 
     public Task<IEnumerable<CatalogBrand>> GetBrandsAsync() =>
         httpClient.GetFromJsonAsync<IEnumerable<CatalogBrand>>(

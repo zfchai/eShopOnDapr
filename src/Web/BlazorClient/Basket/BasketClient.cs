@@ -1,17 +1,10 @@
 ﻿namespace Microsoft.eShopOnDapr.BlazorClient.Basket;
 
-public class BasketClient
+public class BasketClient(HttpClient httpClient)
 {
-    private readonly HttpClient _httpClient;
-
-    public BasketClient(HttpClient httpClient)
-    {
-        _httpClient = httpClient;
-    }
-
     public async Task<IEnumerable<BasketItem>> GetItemsAsync()
     {
-        var basket = await _httpClient.GetFromJsonAsync<BasketData>(
+        var basket = await httpClient.GetFromJsonAsync<BasketData>(
             "b/api/v1/basket/");
 
         return basket!.Items;
@@ -22,7 +15,7 @@ public class BasketClient
         var request = new BasketData(items);
 
         // Save items is a request to the Aggregator service.
-        var response = await _httpClient.PostAsJsonAsync(
+        var response = await httpClient.PostAsJsonAsync(
             "api/v1/basket/",
             request);
 
@@ -34,7 +27,7 @@ public class BasketClient
 
     public async Task CheckoutAsync(BasketCheckout basketCheckout)
     {
-        var response = await _httpClient.PostAsJsonAsync(
+        var response = await httpClient.PostAsJsonAsync(
             "b/api/v1/basket/checkout",
             basketCheckout);
 

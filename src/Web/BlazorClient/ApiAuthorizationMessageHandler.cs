@@ -11,6 +11,6 @@ public class ApiAuthorizationMessageHandler : AuthorizationMessageHandler
         // Configure this message handler to attach bearer tokens to
         // requests going to the API Gateway.
         ConfigureHandler(
-            authorizedUrls: new[] { settings.ApiGatewayUrlExternal });
+            authorizedUrls: [settings.ApiGatewayUrlExternal]);
     }
 }

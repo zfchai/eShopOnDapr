@@ -1,16 +1,11 @@
 ﻿namespace Microsoft.eShopOnDapr.BlazorClient.Basket;
 
-public class UserBasket
+public class UserBasket(BasketClient basketClient)
 {
-    private readonly BasketClient _basketClient;
-
-    public UserBasket(BasketClient basketClient)
-    {
-        _basketClient = basketClient
+    private readonly BasketClient _basketClient = basketClient
             ?? throw new ArgumentNullException(nameof(basketClient));
-    }
 
-    public List<BasketItem> Items { get; set; } = new();
+    public List<BasketItem> Items { get; set; } = [];
 
     public int TotalItemCount => Items.Sum(item => item.Quantity);
 
@@ -21,8 +16,8 @@ public class UserBasket
 
     public async Task LoadAsync()
     {
-        Items = (await _basketClient.GetItemsAsync())
-            .ToList();
+        var items = await _basketClient.GetItemsAsync();
+        Items = items?.ToList() ?? [];
 
         OnItemsChanged(EventArgs.Empty);
     }

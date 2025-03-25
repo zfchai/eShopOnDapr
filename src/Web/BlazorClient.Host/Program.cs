@@ -11,7 +11,7 @@ try
     var host = BuildWebHost();
 
     Log.Information("Starting web host ({ApplicationName})...", appName);
-    host.Run();
+    await host.RunAsync();
 
     return 0;
 }
