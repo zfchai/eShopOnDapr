@@ -3,24 +3,11 @@
 [Route("api/v1/[controller]")]
 [Authorize(Policy = "ApiScope")]
 [ApiController]
-public class BasketController : ControllerBase
+public class BasketController(ILogger<BasketController> logger, IServiceProvider sp) : ControllerBase
 {
-    private readonly IBasketRepository _repository;
-    private readonly IIdentityService _identityService;
-    private readonly IEventBus _eventBus;
-    private readonly ILogger<BasketController> _logger;
-
-    public BasketController(
-        IBasketRepository repository,
-        IIdentityService identityService,
-        IEventBus eventBus,
-        ILogger<BasketController> logger)
-    {
-        _repository = repository;
-        _identityService = identityService;
-        _eventBus = eventBus;
-        _logger = logger;
-    }
+    private readonly IBasketRepository _repository = sp.GetRequiredService<IBasketRepository>();
+    private readonly IIdentityService _identityService = sp.GetRequiredService<IIdentityService>();
+    private readonly IEventBus _eventBus = sp.GetRequiredService<IEventBus>();
 
     [HttpGet]
     [ProducesResponseType(typeof(CustomerBasket), (int)HttpStatusCode.OK)]
@@ -90,7 +77,7 @@ public class BasketController : ControllerBase
     {
         var userId = _identityService.GetUserIdentity();
 
-        _logger.LogInformation("Deleting basket for user {UserId}...", userId);
+        logger.LogInformation("Deleting basket for user {UserId}...", userId);
 
         await _repository.DeleteBasketAsync(userId);
     }

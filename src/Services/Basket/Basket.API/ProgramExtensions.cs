@@ -39,9 +39,9 @@ public static class ProgramExtensions
                         AuthorizationUrl = new Uri($"{identityUrlExternal}/connect/authorize"),
                         TokenUrl = new Uri($"{identityUrlExternal}/connect/token"),
                         Scopes = new Dictionary<string, string>()
-                            {
-                                { "basket", AppName }
-                            }
+                        {
+                            { "basket", AppName }
+                        }
                     }
                 }
             });
@@ -106,7 +106,8 @@ public static class ProgramExtensions
         builder.Services.AddScoped<IEventBus, DaprEventBus>();
         builder.Services.AddScoped<OrderStatusChangedToSubmittedIntegrationEventHandler>();
 
-        builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        builder.Services.AddHttpContextAccessor();
+        //builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         builder.Services.AddScoped<IBasketRepository, DaprBasketRepository>();
         builder.Services.AddScoped<IIdentityService, IdentityService>();
     }

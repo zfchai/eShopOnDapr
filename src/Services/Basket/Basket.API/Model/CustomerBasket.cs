@@ -1,18 +1,8 @@
 ﻿namespace Microsoft.eShopOnDapr.Services.Basket.API.Model;
 
-public class CustomerBasket
+public class CustomerBasket(string customerId)
 {
-    public string BuyerId { get; set; } = "";
+    public string BuyerId { get; set; } = customerId;
 
-    public List<BasketItem> Items { get; set; } = new List<BasketItem>();
-
-    public CustomerBasket()
-    {
-
-    }
-
-    public CustomerBasket(string customerId)
-    {
-        BuyerId = customerId;
-    }
+    public List<BasketItem> Items { get; set; } = [];
 }
