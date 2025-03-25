@@ -8,23 +8,15 @@ namespace IdentityServerHost.Quickstart.UI;
 /// </summary>
 [SecurityHeaders]
 [Authorize]
-public class GrantsController : Controller
+public class GrantsController(
+    ILogger<GrantsController> logger,
+    IServiceProvider sp
+    ) : Controller
 {
-    private readonly IIdentityServerInteractionService _interaction;
-    private readonly IClientStore _clients;
-    private readonly IResourceStore _resources;
-    private readonly IEventService _events;
-
-    public GrantsController(IIdentityServerInteractionService interaction,
-        IClientStore clients,
-        IResourceStore resources,
-        IEventService events)
-    {
-        _interaction = interaction;
-        _clients = clients;
-        _resources = resources;
-        _events = events;
-    }
+    private readonly IIdentityServerInteractionService _interaction = sp.GetRequiredService<IIdentityServerInteractionService>();   
+    private readonly IClientStore _clients = sp.GetRequiredService<IClientStore>();
+    private readonly IResourceStore _resources = sp.GetRequiredService<IResourceStore>();
+    private readonly IEventService _events = sp.GetRequiredService<IEventService>();
 
     /// <summary>
     /// Show list of grants

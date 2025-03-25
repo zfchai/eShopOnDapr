@@ -80,7 +80,7 @@ try
     }
 
     app.Logger.LogInformation("Starting web host ({ApplicationName})...", appName);
-    app.Run();
+    await app.RunAsync();
 
     return 0;
 }

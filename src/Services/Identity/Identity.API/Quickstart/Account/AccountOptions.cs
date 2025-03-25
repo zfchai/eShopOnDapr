@@ -3,7 +3,7 @@
 
 namespace IdentityServerHost.Quickstart.UI;
 
-public class AccountOptions
+internal class AccountOptions
 {
     public static bool AllowLocalLogin = true;
     public static bool AllowRememberLogin = true;

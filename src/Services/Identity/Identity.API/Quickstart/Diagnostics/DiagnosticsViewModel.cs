@@ -21,5 +21,5 @@ public class DiagnosticsViewModel
     }
 
     public AuthenticateResult AuthenticateResult { get; }
-    public IEnumerable<string> Clients { get; } = new List<string>();
+    public IEnumerable<string> Clients { get; } = [];
 }

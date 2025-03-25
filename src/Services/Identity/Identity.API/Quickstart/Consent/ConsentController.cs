@@ -8,21 +8,13 @@ namespace IdentityServerHost.Quickstart.UI;
 /// </summary>
 [SecurityHeaders]
 [Authorize]
-public class ConsentController : Controller
+public class ConsentController(
+    ILogger<ConsentController> logger,
+    IServiceProvider sp
+    ) : Controller
 {
-    private readonly IIdentityServerInteractionService _interaction;
-    private readonly IEventService _events;
-    private readonly ILogger<ConsentController> _logger;
-
-    public ConsentController(
-        IIdentityServerInteractionService interaction,
-        IEventService events,
-        ILogger<ConsentController> logger)
-    {
-        _interaction = interaction;
-        _events = events;
-        _logger = logger;
-    }
+    private readonly IIdentityServerInteractionService _interaction = sp.GetRequiredService<IIdentityServerInteractionService>();   
+    private readonly IEventService _events = sp.GetRequiredService<IEventService>();
 
     /// <summary>
     /// Shows the consent screen
@@ -154,11 +146,8 @@ public class ConsentController : Controller
         {
             return CreateConsentViewModel(model, returnUrl, request);
         }
-        else
-        {
-            _logger.LogError("No consent request matching request: {0}", returnUrl);
-        }
-
+       
+        logger.LogError("No consent request matching request: {0}", returnUrl);
         return null;
     }
 
@@ -169,7 +158,7 @@ public class ConsentController : Controller
         var vm = new ConsentViewModel
         {
             RememberConsent = model?.RememberConsent ?? true,
-            ScopesConsented = model?.ScopesConsented ?? Enumerable.Empty<string>(),
+            ScopesConsented = model?.ScopesConsented ?? [],
             Description = model?.Description,
 
             ReturnUrl = returnUrl,
@@ -192,6 +181,7 @@ public class ConsentController : Controller
                 apiScopes.Add(scopeVm);
             }
         }
+
         if (ConsentOptions.EnableOfflineAccess && request.ValidatedResources.Resources.OfflineAccess)
         {
             apiScopes.Add(GetOfflineAccessScope(vm.ScopesConsented.Contains(IdentityServerConstants.StandardScopes.OfflineAccess) || model == null));
@@ -217,9 +207,9 @@ public class ConsentController : Controller
     public ScopeViewModel CreateScopeViewModel(ParsedScopeValue parsedScopeValue, ApiScope apiScope, bool check)
     {
         var displayName = apiScope.DisplayName ?? apiScope.Name;
-        if (!String.IsNullOrWhiteSpace(parsedScopeValue.ParsedParameter))
+        if (!string.IsNullOrWhiteSpace(parsedScopeValue.ParsedParameter))
         {
-            displayName += ":" + parsedScopeValue.ParsedParameter;
+            displayName += $":{parsedScopeValue.ParsedParameter}";
         }
 
         return new ScopeViewModel

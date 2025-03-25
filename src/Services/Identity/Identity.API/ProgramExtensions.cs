@@ -39,8 +39,8 @@ public static class ProgramExtensions
     public static void AddCustomIdentity(this WebApplicationBuilder builder)
     {
         builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
+                        .AddEntityFrameworkStores<ApplicationDbContext>()
+                        .AddDefaultTokenProviders();
     }
 
     public static void AddCustomIdentityServer(this WebApplicationBuilder builder)
@@ -55,11 +55,11 @@ public static class ProgramExtensions
             options.Events.RaiseFailureEvents = true;
             options.Events.RaiseSuccessEvents = true;
         })
-                .AddInMemoryIdentityResources(Config.IdentityResources)
-                .AddInMemoryApiScopes(Config.ApiScopes)
-                .AddInMemoryApiResources(Config.ApiResources)
-                .AddInMemoryClients(Config.GetClients(builder.Configuration))
-                .AddAspNetIdentity<ApplicationUser>();
+        .AddInMemoryIdentityResources(Config.IdentityResources)
+        .AddInMemoryApiScopes(Config.ApiScopes)
+        .AddInMemoryApiResources(Config.ApiResources)
+        .AddInMemoryClients(Config.GetClients(builder.Configuration))
+        .AddAspNetIdentity<ApplicationUser>();
 
         // not recommended for production - you need to store your key material somewhere secure
         identityServerBuilder.AddDeveloperSigningCredential();
@@ -73,10 +73,10 @@ public static class ProgramExtensions
     public static void AddCustomHealthChecks(this WebApplicationBuilder builder)
     {
         builder.Services.AddHealthChecks()
-                .AddCheck("self", () => HealthCheckResult.Healthy())
-                .AddSqlServer(builder.Configuration["ConnectionStrings:IdentityDB"],
-                    name: "IdentityDB-check",
-                    tags: new string[] { "IdentityDB" });
+                        .AddCheck("self", () => HealthCheckResult.Healthy())
+                        .AddSqlServer(builder.Configuration["ConnectionStrings:IdentityDB"],
+                            name: "IdentityDB-check",
+                            tags: ["IdentityDB"]);
     }
 
     public static void AddCustomApplicationServices(this WebApplicationBuilder builder)

@@ -3,42 +3,39 @@
 public class Config
 {
     public static IEnumerable<IdentityResource> IdentityResources =>
-        new IdentityResource[]
-        {
-                new IdentityResources.OpenId(),
-                new IdentityResources.Profile()
-        };
+        [
+           new IdentityResources.OpenId(),
+           new IdentityResources.Profile()
+        ];
 
     public static IEnumerable<ApiScope> ApiScopes =>
-        new ApiScope[]
-        {
-                new ApiScope("basket", "Access to Basket API"),
-                new ApiScope("ordering", "Access to Ordering API"),
-                new ApiScope("shoppingaggr", "Access to Shopping Aggregator API")
-        };
+        [
+           new ApiScope("basket", "Access to Basket API"),
+           new ApiScope("ordering", "Access to Ordering API"),
+           new ApiScope("shoppingaggr", "Access to Shopping Aggregator API")
+        ];
 
     public static IEnumerable<ApiResource> ApiResources =>
-        new ApiResource[]
-        {
-                new ApiResource("basket-api", "Basket API")
-                {
-                    Scopes = { "basket" }
+        [
+           new ApiResource("basket-api", "Basket API")
+           {
+               Scopes = { "basket" }
 
-                },
-                new ApiResource("ordering-api", "Ordering API")
-                {
-                    Scopes = { "ordering" }
-                },
-                new ApiResource("shoppingaggr-api", "Shopping Aggregator API")
-                {
-                    Scopes = { "shoppingaggr" }
-                }
-        };
+           },
+           new ApiResource("ordering-api", "Ordering API")
+           {
+               Scopes = { "ordering" }
+           },
+           new ApiResource("shoppingaggr-api", "Shopping Aggregator API")
+           {
+               Scopes = { "shoppingaggr" }
+           }
+        ];
 
     public static IEnumerable<Client> GetClients(IConfiguration configuration)
     {
-        return new List<Client>
-            {
+        return
+            [
                 new Client
                 {
                     ClientId = "blazor",
@@ -115,6 +112,6 @@ public class Config
                         "shoppingaggr"
                     }
                 }
-            };
+            ];
     }
 }

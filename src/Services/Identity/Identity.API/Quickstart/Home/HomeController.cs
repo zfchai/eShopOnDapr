@@ -1,63 +1,50 @@
 // Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+namespace IdentityServerHost.Quickstart.UI;
 
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-
-namespace IdentityServerHost.Quickstart.UI
+[SecurityHeaders]
+[AllowAnonymous]
+public class HomeController(
+    ILogger<HomeController> logger,
+    IServiceProvider sp
+    ) : Controller
 {
-    [SecurityHeaders]
-    [AllowAnonymous]
-    public class HomeController : Controller
-    {
-        private readonly IIdentityServerInteractionService _interaction;
-        private readonly IWebHostEnvironment _environment;
-        private readonly ILogger _logger;
+    private readonly IIdentityServerInteractionService _interaction = sp.GetRequiredService<IIdentityServerInteractionService>();   
+    private readonly IWebHostEnvironment _environment = sp.GetRequiredService<IWebHostEnvironment>();
 
-        public HomeController(
-            IIdentityServerInteractionService interaction,
-            IWebHostEnvironment environment,
-            ILogger<HomeController> logger)
+    public IActionResult Index()
+    {
+        if (_environment.IsDevelopment())
         {
-            _interaction = interaction;
-            _environment = environment;
-            _logger = logger;
+            // only show in development
+            return View();
         }
 
-        public IActionResult Index()
+        logger.LogInformation("Homepage is disabled in production. Returning 404.");
+        return NotFound();
+    }
+
+    /// <summary>
+    /// Shows the error page
+    /// </summary>
+    public async Task<IActionResult> Error(string errorId)
+    {
+        var vm = new ErrorViewModel();
+
+        // retrieve error details from identityserver
+        var message = await _interaction.GetErrorContextAsync(errorId);
+        if (message != null)
         {
-            if (_environment.IsDevelopment())
+            vm.Error = message;
+
+            if (!_environment.IsDevelopment())
             {
                 // only show in development
-                return View();
+                message.ErrorDescription = null;
             }
-
-            _logger.LogInformation("Homepage is disabled in production. Returning 404.");
-            return NotFound();
         }
 
-        /// <summary>
-        /// Shows the error page
-        /// </summary>
-        public async Task<IActionResult> Error(string errorId)
-        {
-            var vm = new ErrorViewModel();
-
-            // retrieve error details from identityserver
-            var message = await _interaction.GetErrorContextAsync(errorId);
-            if (message != null)
-            {
-                vm.Error = message;
-
-                if (!_environment.IsDevelopment())
-                {
-                    // only show in development
-                    message.ErrorDescription = null;
-                }
-            }
-
-            return View("Error", vm);
-        }
+        return View("Error", vm);
     }
 }

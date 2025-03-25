@@ -5,29 +5,20 @@ namespace IdentityServerHost.Quickstart.UI;
 
 [Authorize]
 [SecurityHeaders]
-public class DeviceController : Controller
+public class DeviceController(
+    ILogger<DeviceController> logger,
+    IOptions<IdentityServerOptions> options,
+    IServiceProvider sp
+    ) : Controller
 {
-    private readonly IDeviceFlowInteractionService _interaction;
-    private readonly IEventService _events;
-    private readonly IOptions<IdentityServerOptions> _options;
-    private readonly ILogger<DeviceController> _logger;
-
-    public DeviceController(
-        IDeviceFlowInteractionService interaction,
-        IEventService eventService,
-        IOptions<IdentityServerOptions> options,
-        ILogger<DeviceController> logger)
-    {
-        _interaction = interaction;
-        _events = eventService;
-        _options = options;
-        _logger = logger;
-    }
+    private readonly IDeviceFlowInteractionService _interaction = sp.GetRequiredService<IDeviceFlowInteractionService>();   
+    private readonly IEventService _events = sp.GetRequiredService<IEventService>();
+    private readonly IdentityServerOptions _identityServer = options.Value;
 
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        string userCodeParamName = _options.Value.UserInteraction.DeviceVerificationUserCodeParameter;
+        string userCodeParamName = _identityServer.UserInteraction.DeviceVerificationUserCodeParameter;
         string userCode = Request.Query[userCodeParamName];
         if (string.IsNullOrWhiteSpace(userCode)) return View("UserCodeCapture");
 
@@ -67,7 +58,7 @@ public class DeviceController : Controller
         var request = await _interaction.GetAuthorizationContextAsync(model.UserCode);
         if (request == null) return result;
 
-        ConsentResponse grantedConsent = null;
+        ConsentResponse grantedConsent = new();
 
         // user clicked 'no' - send back the standard 'access_denied' response
         if (model.Button == "no")
@@ -146,7 +137,7 @@ public class DeviceController : Controller
             Description = model?.Description,
 
             RememberConsent = model?.RememberConsent ?? true,
-            ScopesConsented = model?.ScopesConsented ?? Enumerable.Empty<string>(),
+            ScopesConsented = model?.ScopesConsented ?? [],
 
             ClientName = request.Client.ClientName ?? request.Client.ClientId,
             ClientUrl = request.Client.ClientUri,
@@ -166,6 +157,7 @@ public class DeviceController : Controller
                 apiScopes.Add(scopeVm);
             }
         }
+
         if (ConsentOptions.EnableOfflineAccess && request.ValidatedResources.Resources.OfflineAccess)
         {
             apiScopes.Add(GetOfflineAccessScope(vm.ScopesConsented.Contains(IdentityServerConstants.StandardScopes.OfflineAccess) || model == null));

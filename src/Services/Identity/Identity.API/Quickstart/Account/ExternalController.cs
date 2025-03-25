@@ -2,31 +2,17 @@ namespace IdentityServerHost.Quickstart.UI;
 
 [SecurityHeaders]
 [AllowAnonymous]
-public class ExternalController : Controller
+public class ExternalController(
+    ILogger<ExternalController> logger, 
+    IServiceProvider sp,
+    UserManager<ApplicationUser> userManager,
+    SignInManager<ApplicationUser> signInManager
+    ) : Controller
 {
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly SignInManager<ApplicationUser> _signInManager;
-    private readonly IIdentityServerInteractionService _interaction;
-    private readonly IClientStore _clientStore;
-    private readonly IEventService _events;
-    private readonly ILogger<ExternalController> _logger;
-
-    public ExternalController(
-        UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager,
-        IIdentityServerInteractionService interaction,
-        IClientStore clientStore,
-        IEventService events,
-        ILogger<ExternalController> logger)
-    {
-        _userManager = userManager;
-        _signInManager = signInManager;
-        _interaction = interaction;
-        _clientStore = clientStore;
-        _events = events;
-        _logger = logger;
-    }
-
+    private readonly IIdentityServerInteractionService _interaction = sp.GetRequiredService<IIdentityServerInteractionService>();
+    private readonly IClientStore _clientStore = sp.GetRequiredService<IClientStore>();
+    private readonly IEventService _events = sp.GetRequiredService<IEventService>();
+   
     /// <summary>
     /// initiate roundtrip to external authentication provider
     /// </summary>
@@ -47,10 +33,10 @@ public class ExternalController : Controller
         {
             RedirectUri = Url.Action(nameof(Callback)),
             Items =
-                {
-                    { "returnUrl", returnUrl },
-                    { "scheme", scheme },
-                }
+            {
+                { "returnUrl", returnUrl },
+                { "scheme", scheme },
+            }
         };
 
         return Challenge(props, scheme);
@@ -70,10 +56,10 @@ public class ExternalController : Controller
             throw new Exception("External authentication error");
         }
 
-        if (_logger.IsEnabled(LogLevel.Debug))
+        if (logger.IsEnabled(LogLevel.Debug))
         {
             var externalClaims = result.Principal.Claims.Select(c => $"{c.Type}: {c.Value}");
-            _logger.LogDebug("External claims: {@claims}", externalClaims);
+            logger.LogDebug("External claims: {@claims}", externalClaims);
         }
 
         // lookup our user and external provider info
@@ -96,7 +82,7 @@ public class ExternalController : Controller
         // issue authentication cookie for user
         // we must issue the cookie maually, and can't use the SignInManager because
         // it doesn't expose an API to issue additional claims from the login workflow
-        var principal = await _signInManager.CreateUserPrincipalAsync(user);
+        var principal = await signInManager.CreateUserPrincipalAsync(user);
         additionalLocalClaims.AddRange(principal.Claims);
         var name = principal.FindFirst(JwtClaimTypes.Name)?.Value ?? user.Id;
 
@@ -152,7 +138,7 @@ public class ExternalController : Controller
         var providerUserId = userIdClaim.Value;
 
         // find external user
-        var user = await _userManager.FindByLoginAsync(provider, providerUserId);
+        var user = await userManager.FindByLoginAsync(provider, providerUserId);
 
         return (user, provider, providerUserId, claims);
     }
@@ -201,16 +187,16 @@ public class ExternalController : Controller
         {
             UserName = Guid.NewGuid().ToString(),
         };
-        var identityResult = await _userManager.CreateAsync(user);
+        var identityResult = await userManager.CreateAsync(user);
         if (!identityResult.Succeeded) throw new Exception(identityResult.Errors.First().Description);
 
         if (filtered.Any())
         {
-            identityResult = await _userManager.AddClaimsAsync(user, filtered);
+            identityResult = await userManager.AddClaimsAsync(user, filtered);
             if (!identityResult.Succeeded) throw new Exception(identityResult.Errors.First().Description);
         }
 
-        identityResult = await _userManager.AddLoginAsync(user, new UserLoginInfo(provider, providerUserId, provider));
+        identityResult = await userManager.AddLoginAsync(user, new UserLoginInfo(provider, providerUserId, provider));
         if (!identityResult.Succeeded) throw new Exception(identityResult.Errors.First().Description);
 
         return user;
@@ -232,7 +218,7 @@ public class ExternalController : Controller
         var idToken = externalResult.Properties.GetTokenValue("id_token");
         if (idToken != null)
         {
-            localSignInProps.StoreTokens(new[] { new AuthenticationToken { Name = "id_token", Value = idToken } });
+            localSignInProps.StoreTokens([new AuthenticationToken { Name = "id_token", Value = idToken }]);
         }
     }
 }

@@ -1,21 +1,14 @@
 ﻿namespace Microsoft.eShopOnDapr.Services.Identity.API.Services;
 
-public class ProfileService : IProfileService
+public class ProfileService(UserManager<ApplicationUser> userManager) : IProfileService
 {
-    private readonly UserManager<ApplicationUser> _userManager;
-
-    public ProfileService(UserManager<ApplicationUser> userManager)
-    {
-        _userManager = userManager;
-    }
-
     async public Task GetProfileDataAsync(ProfileDataRequestContext context)
     {
         var subject = context.Subject ?? throw new ArgumentNullException(nameof(context.Subject));
 
         var subjectId = subject.Claims.Where(x => x.Type == "sub").FirstOrDefault().Value;
 
-        var user = await _userManager.FindByIdAsync(subjectId);
+        var user = await userManager.FindByIdAsync(subjectId);
         if (user == null)
             throw new ArgumentException("Invalid subject identifier");
 
@@ -28,18 +21,18 @@ public class ProfileService : IProfileService
         var subject = context.Subject ?? throw new ArgumentNullException(nameof(context.Subject));
 
         var subjectId = subject.Claims.Where(x => x.Type == "sub").FirstOrDefault().Value;
-        var user = await _userManager.FindByIdAsync(subjectId);
+        var user = await userManager.FindByIdAsync(subjectId);
 
         context.IsActive = false;
 
         if (user != null)
         {
-            if (_userManager.SupportsUserSecurityStamp)
+            if (userManager.SupportsUserSecurityStamp)
             {
                 var security_stamp = subject.Claims.Where(c => c.Type == "security_stamp").Select(c => c.Value).SingleOrDefault();
                 if (security_stamp != null)
                 {
-                    var db_security_stamp = await _userManager.GetSecurityStampAsync(user);
+                    var db_security_stamp = await userManager.GetSecurityStampAsync(user);
                     if (db_security_stamp != security_stamp)
                         return;
                 }
@@ -55,11 +48,11 @@ public class ProfileService : IProfileService
     private IEnumerable<Claim> GetClaimsFromUser(ApplicationUser user)
     {
         var claims = new List<Claim>
-            {
-                new Claim(JwtClaimTypes.Subject, user.Id),
-                new Claim(JwtClaimTypes.PreferredUserName, user.UserName),
-                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName)
-            };
+        {
+            new(JwtClaimTypes.Subject, user.Id),
+            new(JwtClaimTypes.PreferredUserName, user.UserName),
+            new(JwtRegisteredClaimNames.UniqueName, user.UserName)
+        };
 
         if (!string.IsNullOrWhiteSpace(user.Name))
             claims.Add(new Claim("name", user.Name));
@@ -94,22 +87,22 @@ public class ProfileService : IProfileService
         if (!string.IsNullOrWhiteSpace(user.ZipCode))
             claims.Add(new Claim("address_zip_code", user.ZipCode));
 
-        if (_userManager.SupportsUserEmail)
+        if (userManager.SupportsUserEmail)
         {
-            claims.AddRange(new[]
-            {
-                    new Claim(JwtClaimTypes.Email, user.Email),
-                    new Claim(JwtClaimTypes.EmailVerified, user.EmailConfirmed ? "true" : "false", ClaimValueTypes.Boolean)
-                });
+            claims.AddRange(
+            [
+               new Claim(JwtClaimTypes.Email, user.Email),
+               new Claim(JwtClaimTypes.EmailVerified, user.EmailConfirmed ? "true" : "false", ClaimValueTypes.Boolean)
+            ]);
         }
 
-        if (_userManager.SupportsUserPhoneNumber && !string.IsNullOrWhiteSpace(user.PhoneNumber))
+        if (userManager.SupportsUserPhoneNumber && !string.IsNullOrWhiteSpace(user.PhoneNumber))
         {
-            claims.AddRange(new[]
-            {
-                    new Claim(JwtClaimTypes.PhoneNumber, user.PhoneNumber),
-                    new Claim(JwtClaimTypes.PhoneNumberVerified, user.PhoneNumberConfirmed ? "true" : "false", ClaimValueTypes.Boolean)
-                });
+            claims.AddRange(
+            [
+               new Claim(JwtClaimTypes.PhoneNumber, user.PhoneNumber),
+               new Claim(JwtClaimTypes.PhoneNumberVerified, user.PhoneNumberConfirmed ? "true" : "false", ClaimValueTypes.Boolean)
+            ]);
         }
 
         return claims;
