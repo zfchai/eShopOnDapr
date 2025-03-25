@@ -1,21 +1,12 @@
 ﻿namespace Microsoft.eShopOnDapr.Services.Payment.API.IntegrationEvents.EventHandling;
 
-public class OrderStatusChangedToValidatedIntegrationEventHandler :
-    IIntegrationEventHandler<OrderStatusChangedToValidatedIntegrationEvent>
+public class OrderStatusChangedToValidatedIntegrationEventHandler(
+    ILogger<OrderStatusChangedToValidatedIntegrationEventHandler> logger,
+    IOptions<PaymentSettings> settings,
+    IEventBus eventBus
+    ) : IIntegrationEventHandler<OrderStatusChangedToValidatedIntegrationEvent>
 {
-    private readonly PaymentSettings _settings;
-    private readonly IEventBus _eventBus;
-    private readonly ILogger _logger;
-
-    public OrderStatusChangedToValidatedIntegrationEventHandler(
-        IOptions<PaymentSettings> settings,
-        IEventBus eventBus,
-        ILogger<OrderStatusChangedToValidatedIntegrationEventHandler> logger)
-    {
-        _settings = settings.Value;
-        _eventBus = eventBus;
-        _logger = logger;
-    }
+    private readonly PaymentSettings _settings = settings.Value;
 
     public async Task Handle(OrderStatusChangedToValidatedIntegrationEvent @event)
     {
@@ -36,7 +27,7 @@ public class OrderStatusChangedToValidatedIntegrationEventHandler :
         }
         else
         {
-            _logger.LogWarning(
+            logger.LogWarning(
                 "Payment for ${Total} rejected for order {OrderId} because of service configuration",
                 @event.Total,
                 @event.OrderId);
@@ -44,6 +35,6 @@ public class OrderStatusChangedToValidatedIntegrationEventHandler :
             orderPaymentIntegrationEvent = new OrderPaymentFailedIntegrationEvent(@event.OrderId);
         }
 
-        await _eventBus.PublishAsync(orderPaymentIntegrationEvent);
+        await eventBus.PublishAsync(orderPaymentIntegrationEvent);
     }
 }

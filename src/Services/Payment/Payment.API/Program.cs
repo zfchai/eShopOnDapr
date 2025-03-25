@@ -41,7 +41,7 @@ app.MapHealthChecks("/liveness", new HealthCheckOptions
 try
 {
     app.Logger.LogInformation("Starting web host ({ApplicationName})...", appName);
-    app.Run();
+    await app.RunAsync();
 }
 catch (Exception ex)
 {
