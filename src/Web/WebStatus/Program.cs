@@ -24,6 +24,7 @@ app.UseHealthChecksUI(config =>
 app.MapGet(string.IsNullOrEmpty(pathBase)
     ? "/"
     : pathBase, () => Results.LocalRedirect("~/healthchecks-ui"));
+
 app.MapHealthChecksUI();
 
 await app.RunAsync();
