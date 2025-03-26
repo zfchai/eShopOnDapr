@@ -1,6 +1,4 @@
-﻿using Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks.Extensions;
-using Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Extensions;
-
+﻿
 var appName = "Shopping Aggregator API";
 var builder = WebApplication.CreateBuilder(args);
 

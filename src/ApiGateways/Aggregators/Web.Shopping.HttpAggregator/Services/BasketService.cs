@@ -1,6 +1,6 @@
 ﻿namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Services;
 
-public class BasketService(HttpClient httpClient) : IBasketService
+public class BasketService(IServiceProvider sp, HttpClient httpClient) : IBasketService
 {
     public async Task UpdateAsync(BasketData currentBasket, string accessToken)
     {

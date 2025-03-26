@@ -1,6 +1,4 @@
 // Only use in this file to avoid conflicts with Microsoft.Extensions.Logging
-using Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks.Extensions;
-using Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks.Options;
 using Serilog;
 
 namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Extensions;
@@ -114,35 +112,56 @@ public static class ProgramExtensions
 
     public static void AddCustomHealthChecks(this WebApplicationBuilder builder)
     {
-        builder.AddCustomOptions<List<HealthCheckUrl>>("HealthChecks", out IConfigurationSection section);
+        List<HealthCheckUrl> healthCheckUrls =
+        [
+            new HealthCheckUrl
+            {
+                UriString = builder.Configuration["CatalogUrlHC"]!,
+                Name = "catalogapi-check",
+                Tags = ["catalogapi"]
+            },
+            new HealthCheckUrl
+            {
+                UriString = builder.Configuration["IdentityUrlHC"]!,
+                Name = "identityapi-check",
+                Tags = ["identityapi"]
+            },
+            new HealthCheckUrl
+            {
+                UriString = builder.Configuration["BasketUrlHC"]!,
+                Name = "basketapi-check",
+                Tags = ["basketapi"]
+            },
+        ];
 
-        var healthCheckUrls = section.Get<List<HealthCheckUrl>>(); 
-
-        // TODO: Need to migrate the health check address to the appsetings.json 
-        builder.Services
+        var healthChecksBuilder = builder.Services
                 .AddHealthChecks()
                 .AddCheck("self", () => HealthCheckResult.Healthy())
-                .AddDapr()
-                .AddUrlGroup(new Uri(builder.Configuration["CatalogUrlHC"]!), name: "catalogapi-check", tags: ["catalogapi"])
-                .AddUrlGroup(new Uri(builder.Configuration["IdentityUrlHC"]!), name: "identityapi-check", tags: ["identityapi"])
-                .AddUrlGroup(new Uri(builder.Configuration["BasketUrlHC"]!), name: "basketapi-check", tags: ["basketapi"]);
+                .AddDapr();
+
+        foreach (var item in healthCheckUrls)
+        {
+            healthChecksBuilder.AddUrlGroup(item.GetUri(), name: item.Name, tags: item.Tags);
+        }
     }
 
     public static void AddCustomApplicationServices(this WebApplicationBuilder builder)
     {
+        var sp = builder.Services.BuildServiceProvider();
+
         builder.Services.AddSingleton<IBasketService, BasketService>(
-            _ => new BasketService(DaprClient.CreateInvokeHttpClient("basket-api")));
+            _ => new BasketService(sp, DaprClient.CreateInvokeHttpClient("basket-api")));
 
         builder.Services.AddSingleton<ICatalogService, CatalogService>(
-            _ => new CatalogService(DaprClient.CreateInvokeHttpClient("catalog-api")));
+            _ => new CatalogService(sp, DaprClient.CreateInvokeHttpClient("catalog-api")));
     }
 
-    public static void AddCustomOptions<TOptions>(this WebApplicationBuilder builder, string propertyName, out IConfigurationSection section) 
+    public static void AddCustomOptions<TOptions>(this WebApplicationBuilder builder, string propertyName) 
         where TOptions : class
     {
         var config = builder.Configuration;
         var services = builder.Services;
-        section = config.GetSection(propertyName);
+        var section = config.GetSection(propertyName);
         services.AddOptions<TOptions>(section);
     }
 

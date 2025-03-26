@@ -3,72 +3,24 @@
 [Route("api/v1/[controller]")]
 [Authorize]
 [ApiController]
-public class BasketController(IServiceProvider sp) : ControllerBase
+public class BasketController(ILogger<BasketController> logger, IServiceProvider sp) : ControllerBase
 {
     private readonly ICatalogService _catalog = sp.GetRequiredService<ICatalogService>();
-    private readonly IBasketService _basket = sp.GetRequiredService<IBasketService>();
 
-    [HttpPost]
-    [HttpPut]
-    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    [ProducesResponseType(typeof(BasketData), (int)HttpStatusCode.OK)]
+    [HttpPost, HttpPut]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(BasketData), StatusCodes.Status200OK)]
     public async Task<ActionResult<BasketData>> UpdateAllBasketAsync(
-        [FromBody] UpdateBasketRequest data,
-        [FromHeader] string authorization)
+        [FromHeader] string authorization,
+        [FromBody] UpdateBasketRequest data)
     {
-        BasketData basket;
+        var (statusCode, msg, basket) = await _catalog.UpdateAllBasketAsync(data, authorization);
 
-        if (data.Items is null || !data.Items.Any())
+        if (statusCode == StatusCodes.Status400BadRequest)
         {
-            basket = new();
-        }
-        else
-        {
-            // Get the item details from the catalog API.
-            var catalogItems = await _catalog.GetCatalogItemsAsync(
-                data.Items.Select(x => x.ProductId));
-            
-            if (catalogItems == null)
-            {
-                return BadRequest(
-                    "Catalog items were not available for the specified items in the basket.");
-            }
-
-            // Check item availability and prices; store results in basket object.
-            basket = CreateValidatedBasket(data.Items, catalogItems);
+            return BadRequest(msg);
         }
 
-        // Save the updated shopping basket.
-        await _basket.UpdateAsync(basket, authorization.Substring("Bearer ".Length));
-
-        return basket;
-    }
-
-    private BasketData CreateValidatedBasket(
-        IEnumerable<UpdateBasketRequestItemData> basketItems,
-        IEnumerable<CatalogItem> catalogItems)
-    {
-        var basket = new BasketData();
-
-        var itemsCalculated = basketItems.GroupBy(
-            x => x.ProductId,
-            x => x,
-            (k, i) => new UpdateBasketRequestItemData(k, i.Sum(j => j.Quantity)));
-
-        foreach (var bitem in itemsCalculated)
-        {
-            var catalogItem = catalogItems.SingleOrDefault(ci => ci.Id == bitem.ProductId);
-            if (catalogItem is not null)
-            {
-                basket.Items.Add(new BasketDataItem(
-                    catalogItem.Id,
-                    catalogItem.Name,
-                    catalogItem.Price,
-                    bitem.Quantity,
-                    catalogItem.PictureFileName));
-            }
-        }
-
-        return basket;
+        return Ok(basket);
     }
 }
