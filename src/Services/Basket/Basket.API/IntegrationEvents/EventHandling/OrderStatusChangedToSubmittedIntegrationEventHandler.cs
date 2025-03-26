@@ -4,7 +4,7 @@ public class OrderStatusChangedToSubmittedIntegrationEventHandler(
     IBasketRepository repository)
         : IIntegrationEventHandler<OrderStatusChangedToSubmittedIntegrationEvent>
 {
-    public Task Handle(OrderStatusChangedToSubmittedIntegrationEvent @event) =>
+    public Task HandleAsync(OrderStatusChangedToSubmittedIntegrationEvent @event) =>
         repository.DeleteBasketAsync(@event.BuyerId);
 }
 

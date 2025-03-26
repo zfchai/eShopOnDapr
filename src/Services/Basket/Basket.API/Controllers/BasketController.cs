@@ -3,31 +3,22 @@
 [Route("api/v1/[controller]")]
 [Authorize(Policy = "ApiScope")]
 [ApiController]
-public class BasketController(ILogger<BasketController> logger, IServiceProvider sp) : ControllerBase
+public class BasketController(ILogger<BasketController> logger, IIdentityService identityService) : ControllerBase
 {
-    private readonly IBasketRepository _repository = sp.GetRequiredService<IBasketRepository>();
-    private readonly IIdentityService _identityService = sp.GetRequiredService<IIdentityService>();
-    private readonly IEventBus _eventBus = sp.GetRequiredService<IEventBus>();
-
     [HttpGet]
     [ProducesResponseType(typeof(CustomerBasket), StatusCodes.Status200OK)]
     public async Task<ActionResult<CustomerBasket>> GetBasketAsync()
     {
-        var userId = _identityService.GetUserIdentity();
-        var basket = await _repository.GetBasketAsync(userId);
-
-        return Ok(basket ?? new CustomerBasket(userId));
+        var basket = await identityService.GetBasketAsync();
+        return Ok(basket);
     }
 
     [HttpPost]
     [ProducesResponseType(typeof(CustomerBasket), StatusCodes.Status200OK)]
     public async Task<ActionResult<CustomerBasket>> UpdateBasketAsync([FromBody] CustomerBasket value)
     {
-        var userId = _identityService.GetUserIdentity();
-
-        value.BuyerId = userId;
-
-        return Ok(await _repository.UpdateBasketAsync(value));
+        var basket = await identityService.UpdateBasketAsync(value);
+        return Ok(basket);
     }
 
     [HttpPost("checkout")]
@@ -37,37 +28,14 @@ public class BasketController(ILogger<BasketController> logger, IServiceProvider
         [FromBody] BasketCheckout basketCheckout,
         [FromHeader(Name = "X-Request-Id")] string requestId)
     {
-        var userId = _identityService.GetUserIdentity();
+        int statusCode = await identityService.CheckoutAsync(basketCheckout, requestId);
 
-        var basket = await _repository.GetBasketAsync(userId);
-        if (basket == null)
+        return statusCode switch
         {
-            return BadRequest();
-        }
-
-        var eventRequestId = Guid.TryParse(requestId, out Guid parsedRequestId)
-            ? parsedRequestId : Guid.NewGuid();
-
-        var eventMessage = new UserCheckoutAcceptedIntegrationEvent(
-            userId,
-            basketCheckout.UserEmail,
-            basketCheckout.City,
-            basketCheckout.Street,
-            basketCheckout.State,
-            basketCheckout.Country,
-            basketCheckout.CardNumber,
-            basketCheckout.CardHolderName,
-            basketCheckout.CardExpiration,
-            basketCheckout.CardSecurityCode,
-            eventRequestId,
-            basket);
-
-        // Once basket is checkout, sends an integration event to
-        // ordering.api to convert basket to order and proceed with
-        // order creation process
-        await _eventBus.PublishAsync(eventMessage);
-
-        return Accepted();
+            StatusCodes.Status202Accepted => Accepted(),
+            StatusCodes.Status400BadRequest => BadRequest(),
+            _ => NoContent()
+        };
     }
 
     // DELETE api/values/5
@@ -75,10 +43,6 @@ public class BasketController(ILogger<BasketController> logger, IServiceProvider
     [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
     public async Task DeleteBasketAsync()
     {
-        var userId = _identityService.GetUserIdentity();
-
-        logger.LogInformation("Deleting basket for user {UserId}...", userId);
-
-        await _repository.DeleteBasketAsync(userId);
+        await identityService.DeleteBasketAsync();
     }
 }

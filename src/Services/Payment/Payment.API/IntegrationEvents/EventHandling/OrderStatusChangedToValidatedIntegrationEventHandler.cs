@@ -8,7 +8,7 @@ public class OrderStatusChangedToValidatedIntegrationEventHandler(
 {
     private readonly PaymentSettings _settings = settings.Value;
 
-    public async Task Handle(OrderStatusChangedToValidatedIntegrationEvent @event)
+    public async Task HandleAsync(OrderStatusChangedToValidatedIntegrationEvent @event)
     {
         IntegrationEvent orderPaymentIntegrationEvent;
 

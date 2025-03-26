@@ -11,5 +11,5 @@ public class IntegrationEventController : ControllerBase
     public Task HandleAsync(
         OrderStatusChangedToSubmittedIntegrationEvent @event,
         [FromServices] OrderStatusChangedToSubmittedIntegrationEventHandler handler)
-        => handler.Handle(@event);
+        => handler.HandleAsync(@event);
 }

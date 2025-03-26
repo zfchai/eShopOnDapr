@@ -5,7 +5,7 @@ public class OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler(
     IEventBus eventBus) : 
     IIntegrationEventHandler<OrderStatusChangedToAwaitingStockValidationIntegrationEvent>
 {
-    public async Task Handle(OrderStatusChangedToAwaitingStockValidationIntegrationEvent @event)
+    public async Task HandleAsync(OrderStatusChangedToAwaitingStockValidationIntegrationEvent @event)
     {
         var confirmedOrderStockItems = new List<ConfirmedOrderStockItem>();
 

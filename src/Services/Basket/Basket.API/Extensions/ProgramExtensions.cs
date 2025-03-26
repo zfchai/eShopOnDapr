@@ -1,8 +1,7 @@
 ﻿// Only use in this file to avoid conflicts with Microsoft.Extensions.Logging
-using Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks.Extensions;
 using Serilog;
 
-namespace Microsoft.eShopOnDapr.Services.Basket.APIc.Extensions;
+namespace Microsoft.eShopOnDapr.Services.Basket.API.Extensions;
 
 public static class ProgramExtensions
 {

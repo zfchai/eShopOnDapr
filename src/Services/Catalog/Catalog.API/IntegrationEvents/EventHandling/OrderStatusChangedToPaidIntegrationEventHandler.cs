@@ -3,7 +3,7 @@
 public class OrderStatusChangedToPaidIntegrationEventHandler(CatalogDbContext context) : 
     IIntegrationEventHandler<OrderStatusChangedToPaidIntegrationEvent>
 {
-    public async Task Handle(OrderStatusChangedToPaidIntegrationEvent @event)
+    public async Task HandleAsync(OrderStatusChangedToPaidIntegrationEvent @event)
     {
         //we're not blocking stock/inventory
         foreach (var orderStockItem in @event.OrderStockItems)

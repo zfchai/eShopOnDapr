@@ -11,12 +11,12 @@ public class IntegrationEventController : ControllerBase
     public Task HandleAsync(
         OrderStatusChangedToAwaitingStockValidationIntegrationEvent @event,
         [FromServices] OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler handler) =>
-        handler.Handle(@event);
+        handler.HandleAsync(@event);
 
     [HttpPost("OrderStatusChangedToPaid")]
     [Topic(DAPR_PUBSUB_NAME, "OrderStatusChangedToPaidIntegrationEvent")]
     public Task HandleAsync(
         OrderStatusChangedToPaidIntegrationEvent @event,
         [FromServices] OrderStatusChangedToPaidIntegrationEventHandler handler) =>
-        handler.Handle(@event);
+        handler.HandleAsync(@event);
 }

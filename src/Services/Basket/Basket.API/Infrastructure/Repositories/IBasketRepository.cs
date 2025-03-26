@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Basket.API.Model;
+﻿namespace Microsoft.eShopOnDapr.Services.Basket.API.Infrastructure.Repositories;
 
 public interface IBasketRepository
 {
