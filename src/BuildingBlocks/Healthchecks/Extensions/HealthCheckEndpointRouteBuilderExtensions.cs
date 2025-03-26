@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks.Extensions;
 
 public static class HealthCheckEndpointRouteBuilderExtensions
 {

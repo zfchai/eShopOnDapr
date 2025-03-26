@@ -1,11 +1,36 @@
 // Only use in this file to avoid conflicts with Microsoft.Extensions.Logging
+using Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks.Extensions;
+using Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks.Options;
 using Serilog;
 
-namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator;
+namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Extensions;
 
 public static class ProgramExtensions
 {
     private const string AppName = "Shopping Aggregator API";
+
+    public static void ApplyAppsettings(this WebApplicationBuilder builder, string[] args) 
+    {
+        // Retrieve the environmental information of the current application
+        var appRoot = builder.Environment.ContentRootPath;
+        var envName = builder.Environment.EnvironmentName;
+
+        // Add default configuration file
+        builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                             .AddJsonFile($"appsettings.{envName}.json", optional: true, reloadOnChange: true);
+
+        // Build the complete path of MyAdata/Config/appsetings.json
+        var customDefaultConfigPath = Path.Combine(appRoot, "AppData", "Config", "appsettings.json");
+        var customEnvConfigPath = Path.Combine(appRoot, "AppData", "Config", $"appsettings.{envName}.json");
+
+        // Add custom configuration file
+        builder.Configuration.AddJsonFile(customDefaultConfigPath, optional: true, reloadOnChange: true)
+                             .AddJsonFile(customEnvConfigPath, optional: true, reloadOnChange: true);
+
+        // Add environment variables and command-line parameters
+        builder.Configuration.AddEnvironmentVariables();
+        builder.Configuration.AddCommandLine(args);
+    }
 
     public static void AddCustomSerilog(this WebApplicationBuilder builder)
     {
@@ -87,13 +112,21 @@ public static class ProgramExtensions
         });
     }
 
-    public static void AddCustomHealthChecks(this WebApplicationBuilder builder) =>
-        builder.Services.AddHealthChecks()
-            .AddCheck("self", () => HealthCheckResult.Healthy())
-            .AddDapr()
-            .AddUrlGroup(new Uri(builder.Configuration["CatalogUrlHC"]!), name: "catalogapi-check", tags: ["catalogapi"])
-            .AddUrlGroup(new Uri(builder.Configuration["IdentityUrlHC"]!), name: "identityapi-check", tags: ["identityapi"])
-            .AddUrlGroup(new Uri(builder.Configuration["BasketUrlHC"]!), name: "basketapi-check", tags: ["basketapi"]);
+    public static void AddCustomHealthChecks(this WebApplicationBuilder builder)
+    {
+        builder.AddCustomOptions<List<HealthCheckUrl>>("HealthChecks", out IConfigurationSection section);
+
+        var healthCheckUrls = section.Get<List<HealthCheckUrl>>(); 
+
+        // TODO: Need to migrate the health check address to the appsetings.json 
+        builder.Services
+                .AddHealthChecks()
+                .AddCheck("self", () => HealthCheckResult.Healthy())
+                .AddDapr()
+                .AddUrlGroup(new Uri(builder.Configuration["CatalogUrlHC"]!), name: "catalogapi-check", tags: ["catalogapi"])
+                .AddUrlGroup(new Uri(builder.Configuration["IdentityUrlHC"]!), name: "identityapi-check", tags: ["identityapi"])
+                .AddUrlGroup(new Uri(builder.Configuration["BasketUrlHC"]!), name: "basketapi-check", tags: ["basketapi"]);
+    }
 
     public static void AddCustomApplicationServices(this WebApplicationBuilder builder)
     {
@@ -103,10 +136,25 @@ public static class ProgramExtensions
         builder.Services.AddSingleton<ICatalogService, CatalogService>(
             _ => new CatalogService(DaprClient.CreateInvokeHttpClient("catalog-api")));
     }
+
+    public static void AddCustomOptions<TOptions>(this WebApplicationBuilder builder, string propertyName, out IConfigurationSection section) 
+        where TOptions : class
+    {
+        var config = builder.Configuration;
+        var services = builder.Services;
+        section = config.GetSection(propertyName);
+        services.AddOptions<TOptions>(section);
+    }
+
+    internal static void AddOptions<TOptions>(this IServiceCollection services, IConfigurationSection section) 
+        where TOptions : class
+    {
+        services.AddOptions<TOptions>()
+           .Bind(section, opt => opt.BindNonPublicProperties = true)
+           .ValidateDataAnnotations();
+    }
+
 }
-
-
-
 
 
 //public static void AddCustomMvc(this WebApplicationBuilder builder)

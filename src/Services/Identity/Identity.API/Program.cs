@@ -1,4 +1,6 @@
-﻿var appName = "Identity API";
+﻿using Microsoft.eShopOnDapr.Services.Identity.API.Extensions;
+
+var appName = "Identity API";
 var builder = WebApplication.CreateBuilder();
 
 builder.AddCustomConfiguration();
@@ -51,7 +53,6 @@ app.Use((context, next) =>
 });
 
 app.UseIdentityServer();
-
 
 app.UseAuthorization();
 

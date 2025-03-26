@@ -1,6 +1,6 @@
 ﻿using Serilog;
 
-namespace Microsoft.eShopOnDapr.Services.Identity.API;
+namespace Microsoft.eShopOnDapr.Services.Identity.API.Extensions;
 
 public static class ProgramExtensions
 {
@@ -70,14 +70,12 @@ public static class ProgramExtensions
         builder.Services.AddAuthentication();
     }
 
-    public static void AddCustomHealthChecks(this WebApplicationBuilder builder)
-    {
+    public static void AddCustomHealthChecks(this WebApplicationBuilder builder) =>
         builder.Services.AddHealthChecks()
                         .AddCheck("self", () => HealthCheckResult.Healthy())
                         .AddNpgSql(builder.Configuration["ConnectionStrings:IdentityDB"],
                             name: "IdentityDB-check",
                             tags: ["IdentityDB"]);
-    }
 
     public static void AddCustomApplicationServices(this WebApplicationBuilder builder)
     {

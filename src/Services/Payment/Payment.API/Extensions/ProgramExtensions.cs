@@ -1,7 +1,8 @@
 ﻿// Only use in this file to avoid conflicts with Microsoft.Extensions.Logging
+using Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks.Extensions;
 using Serilog;
 
-namespace Microsoft.eShopOnDapr.Services.Payment.API;
+namespace Microsoft.eShopOnDapr.Services.Payment.API.Extensions;
 
 public static class ProgramExtensions
 {

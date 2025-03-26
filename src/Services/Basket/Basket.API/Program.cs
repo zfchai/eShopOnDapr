@@ -1,4 +1,7 @@
-﻿var appName = "Basket API";
+﻿using Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks.Extensions;
+using Microsoft.eShopOnDapr.Services.Basket.APIc.Extensions;
+
+var appName = "Basket API";
 var builder = WebApplication.CreateBuilder();
 
 builder.AddCustomSerilog();
