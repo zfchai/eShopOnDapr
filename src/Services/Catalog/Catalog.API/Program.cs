@@ -1,6 +1,4 @@
-﻿using Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks.Extensions;
-using Microsoft.eShopOnDapr.Services.Catalog.API.Extensions;
-
+﻿
 var appName = "Catalog API";
 var builder = WebApplication.CreateBuilder(args);
 

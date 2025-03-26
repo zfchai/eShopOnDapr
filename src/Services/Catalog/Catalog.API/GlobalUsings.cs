@@ -2,8 +2,6 @@
 global using Dapr.Client;
 global using Dapr.Extensions.Configuration;
 global using HealthChecks.UI.Client;
-global using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-global using Microsoft.AspNetCore.Hosting;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -11,6 +9,7 @@ global using Microsoft.eShopOnDapr.BuildingBlocks.EventBus;
 global using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Abstractions;
 global using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
 global using Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks.Extensions;
+global using Microsoft.eShopOnDapr.Services.Catalog.API.Extensions;
 global using Microsoft.eShopOnDapr.Services.Catalog.API.Services;
 global using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure;
 global using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.EntityConfigurations;
