@@ -1,6 +1,6 @@
 namespace Microsoft.eShopOnDapr.BuildingBlocks.EventBus;
 
-public class DaprEventBus(ILogger<DaprEventBus> logger, DaprClient dapr) : IEventBus
+public class DaprEventBus(ILogger<DaprEventBus> logger, DaprClient daprClient) : IEventBus
 {
     private const string PubSubName = "eshopondapr-pubsub";
 
@@ -17,6 +17,6 @@ public class DaprEventBus(ILogger<DaprEventBus> logger, DaprClient dapr) : IEven
         // We need to make sure that we pass the concrete type to PublishEventAsync,
         // which can be accomplished by casting the event to dynamic. This ensures
         // that all event fields are properly serialized.
-        await dapr.PublishEventAsync(PubSubName, topicName, (object)integrationEvent);
+        await daprClient.PublishEventAsync(PubSubName, topicName, (object)integrationEvent);
     }
 }
