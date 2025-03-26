@@ -1,5 +1,4 @@
 ﻿// Only use in this file to avoid conflicts with Microsoft.Extensions.Logging
-using Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks.Extensions;
 using Serilog;
 
 namespace Microsoft.eShopOnDapr.Services.Catalog.API.Extensions;
@@ -56,6 +55,7 @@ public static class ProgramExtensions
     public static void AddCustomApplicationServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<IEventBus, DaprEventBus>();
+        builder.Services.AddScoped<ICatalogService, CatalogService>();
         builder.Services.AddScoped<OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler>();
         builder.Services.AddScoped<OrderStatusChangedToPaidIntegrationEventHandler>();
     }
