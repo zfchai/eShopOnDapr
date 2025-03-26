@@ -54,6 +54,68 @@ Note that it will take a little while to start all containers. eShopOnDapr inclu
 
 When all microservices are healthy, you can navigate to http://localhost:5104 to view the eShopOnDapr UI.
 
+## Database initialization
+
+### 1. Install dotnet-ef tool
+
+Make sure you have installed it `.NET SDK`， Then install the dotnet-ef tool using the following command:
+
+```bash
+dotnet tool install --global dotnet-ef
+```
+
+If it has already been installed, you can use the following command to update to the latest version:
+
+```bash
+dotnet tool update --global dotnet-ef
+```
+
+Verify if the installation was successful:
+
+```bash
+dotnet ef --version
+```
+
+### 2. Add Migration
+
+Select the corresponding service and run the following command to generate the migration file:
+
+```bash
+dotnet ef migrations add InitialCreate --output-dir Infrastructure/Migrations
+```
+
+###3. Generate migration SQL script
+
+Use the following command to generate a migrated SQL script:
+
+```bash
+dotnet ef migrations script
+```
+
+**Common options:**
+
+- Specify migration scope:
+
+If you have multiple migrations and only want to generate SQL scripts for a specific migration scope, you can use the -- from and -- to parameters.
+
+```bash
+dotnet ef migrations script --from <fromMigrationName> --to <toMigrationName>
+
+#For example:
+dotnet ef migrations script --from InitialCreate --to SecondMigration
+```
+
+- Output to file:
+
+You can output the generated SQL script to a file.
+
+```bash
+dotnet ef migrations script --output <outputFilePath>
+
+#For example:
+dotnet ef migrations script --output migrations.sql
+```
+
 ### Attributions
 
 Model photo by  [Angelo Pantazis](https://unsplash.com/@angelopantazis?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)  on  [Unsplash](https://unsplash.com/?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
