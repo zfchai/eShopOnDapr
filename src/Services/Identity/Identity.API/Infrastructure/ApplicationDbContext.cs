@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Identity.API.Data;
+﻿namespace Microsoft.eShopOnDapr.Services.Identity.API.Infrastructure;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
 {

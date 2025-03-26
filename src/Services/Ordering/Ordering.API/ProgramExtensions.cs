@@ -98,7 +98,7 @@ public static class ProgramExtensions
         builder.Services.AddHealthChecks()
             .AddCheck("self", () => HealthCheckResult.Healthy())
             .AddDapr()
-            .AddSqlServer(
+            .AddNpgSql(
                 builder.Configuration["ConnectionStrings:OrderingDB"]!,
                 name: "OrderingDB-check",
                 tags: ["orderdb"]);
@@ -116,7 +116,7 @@ public static class ProgramExtensions
 
     public static void AddCustomDatabase(this WebApplicationBuilder builder) =>
         builder.Services.AddDbContext<OrderingDbContext>(
-            options => options.UseSqlServer(builder.Configuration["ConnectionStrings:OrderingDB"]!));
+            options => options.UseNpgsql(builder.Configuration["ConnectionStrings:OrderingDB"]!));
 
     public static void ApplyDatabaseMigration(this WebApplication app)
     {

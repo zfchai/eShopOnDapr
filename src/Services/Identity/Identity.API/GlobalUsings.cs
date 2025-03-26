@@ -20,7 +20,7 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.AspNetCore.Mvc.Filters;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.eShopOnDapr.Services.Identity.API;
-global using Microsoft.eShopOnDapr.Services.Identity.API.Data;
+global using Microsoft.eShopOnDapr.Services.Identity.API.Infrastructure;
 global using Microsoft.eShopOnDapr.Services.Identity.API.Models;
 global using Microsoft.eShopOnDapr.Services.Identity.API.Services;
 global using Microsoft.Extensions.Diagnostics.HealthChecks;

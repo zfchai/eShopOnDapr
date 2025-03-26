@@ -47,7 +47,7 @@ public static class ProgramExtensions
         builder.Services.AddHealthChecks()
             .AddCheck("self", () => HealthCheckResult.Healthy())
             .AddDapr()
-            .AddSqlServer(
+            .AddNpgSql(
                 builder.Configuration["ConnectionStrings:CatalogDB"]!,
                 name: "CatalogDB-check",
                 tags: ["catalogdb"]);
@@ -62,7 +62,7 @@ public static class ProgramExtensions
     public static void AddCustomDatabase(this WebApplicationBuilder builder)
     {
         builder.Services.AddDbContext<CatalogDbContext>(
-            options => options.UseSqlServer(builder.Configuration["ConnectionStrings:CatalogDB"]!));
+            options => options.UseNpgsql(builder.Configuration["ConnectionStrings:CatalogDB"]!));
     }
 
     public static void ApplyDatabaseMigration(this WebApplication app)

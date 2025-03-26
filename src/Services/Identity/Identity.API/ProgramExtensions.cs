@@ -34,7 +34,7 @@ public static class ProgramExtensions
 
     public static void AddCustomDatabase(this WebApplicationBuilder builder) =>
         builder.Services.AddDbContext<ApplicationDbContext>(
-            options => options.UseSqlServer(builder.Configuration["ConnectionStrings:IdentityDB"]));
+            options => options.UseNpgsql(builder.Configuration["ConnectionStrings:IdentityDB"]));
 
     public static void AddCustomIdentity(this WebApplicationBuilder builder)
     {
@@ -74,7 +74,7 @@ public static class ProgramExtensions
     {
         builder.Services.AddHealthChecks()
                         .AddCheck("self", () => HealthCheckResult.Healthy())
-                        .AddSqlServer(builder.Configuration["ConnectionStrings:IdentityDB"],
+                        .AddNpgSql(builder.Configuration["ConnectionStrings:IdentityDB"],
                             name: "IdentityDB-check",
                             tags: ["IdentityDB"]);
     }

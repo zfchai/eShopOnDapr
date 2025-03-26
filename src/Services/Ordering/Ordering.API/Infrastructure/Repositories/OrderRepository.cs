@@ -20,8 +20,11 @@ public class OrderRepository : IOrderRepository
             await _orderingContext.SaveChangesAsync();
             return order;
         }
-        catch (DbUpdateException ex)
-            when ((ex.InnerException as SqlException)?.Number == 2627)
+        //catch (DbUpdateException ex) when ((ex.InnerException as SqlException)?.Number == 2627)
+        //{
+        //    return (await GetOrderByIdAsync(order.Id))!;
+        //}
+        catch (DbUpdateException ex) when ((ex.InnerException as Npgsql.NpgsqlException)?.ErrorCode == 2627)
         {
             return (await GetOrderByIdAsync(order.Id))!;
         }
