@@ -1,5 +1,4 @@
-﻿using Microsoft.eShopOnDapr.Services.Payment.API.Extensions;
-
+﻿
 var appName = "Payment API";
 var builder = WebApplication.CreateBuilder(args);
 
