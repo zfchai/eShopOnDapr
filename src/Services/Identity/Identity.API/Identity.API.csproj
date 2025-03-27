@@ -47,4 +47,8 @@
     <Folder Include="Infrastructure\Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Foundations\Services.API.Abstraction\Services.API.Abstraction.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -19,6 +19,8 @@ global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.AspNetCore.Mvc.Filters;
 global using Microsoft.EntityFrameworkCore;
+global using Microsoft.eShopOnDapr.Services.API.Abstraction.Utilities;
+global using Microsoft.eShopOnDapr.Services.API.Abstraction.Identity.Settings;
 global using Microsoft.eShopOnDapr.Services.Identity.API;
 global using Microsoft.eShopOnDapr.Services.Identity.API.Infrastructure;
 global using Microsoft.eShopOnDapr.Services.Identity.API.Models;

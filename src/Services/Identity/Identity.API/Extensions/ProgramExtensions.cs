@@ -1,16 +1,24 @@
-﻿using Serilog;
+﻿
+using Serilog;
 
 namespace Microsoft.eShopOnDapr.Services.Identity.API.Extensions;
 
 public static class ProgramExtensions
 {
     private const string AppName = "Identity API";
+    private const string DbConnString = "ConnectionStrings:IdentityDB";
 
     public static void AddCustomConfiguration(this WebApplicationBuilder builder)
     {
         builder.Configuration.AddDaprSecretStore(
            "eshopondapr-secretstore",
            new DaprClientBuilder().Build());
+    }
+
+    public static void AddCustomOptions(this WebApplicationBuilder builder)
+    {
+        builder.AddCustomOptions<ConnectionStrings>(nameof(ConnectionStrings));
+
     }
 
     public static void AddCustomSerilog(this WebApplicationBuilder builder)
@@ -34,14 +42,12 @@ public static class ProgramExtensions
 
     public static void AddCustomDatabase(this WebApplicationBuilder builder) =>
         builder.Services.AddDbContext<ApplicationDbContext>(
-            options => options.UseNpgsql(builder.Configuration["ConnectionStrings:IdentityDB"]));
+            options => options.UseNpgsql(builder.Configuration[DbConnString]));
 
-    public static void AddCustomIdentity(this WebApplicationBuilder builder)
-    {
+    public static void AddCustomIdentity(this WebApplicationBuilder builder) =>
         builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
                         .AddEntityFrameworkStores<ApplicationDbContext>()
                         .AddDefaultTokenProviders();
-    }
 
     public static void AddCustomIdentityServer(this WebApplicationBuilder builder)
     {
@@ -73,7 +79,7 @@ public static class ProgramExtensions
     public static void AddCustomHealthChecks(this WebApplicationBuilder builder) =>
         builder.Services.AddHealthChecks()
                         .AddCheck("self", () => HealthCheckResult.Healthy())
-                        .AddNpgSql(builder.Configuration["ConnectionStrings:IdentityDB"],
+                        .AddNpgSql(builder.Configuration[DbConnString],
                             name: "IdentityDB-check",
                             tags: ["IdentityDB"]);
 
@@ -81,4 +87,23 @@ public static class ProgramExtensions
     {
         builder.Services.AddTransient<IProfileService, ProfileService>();
     }
+
+    #region CustomOptions
+    internal static void AddCustomOptions<TOptions>(this WebApplicationBuilder builder, string propertyName)
+        where TOptions : class
+    {
+        var config = builder.Configuration;
+        var services = builder.Services;
+        var section = config.GetSection(propertyName);
+        services.AddOptions<TOptions>(section);
+    }
+
+    internal static void AddOptions<TOptions>(this IServiceCollection services, IConfigurationSection section)
+        where TOptions : class
+    {
+        services.AddOptions<TOptions>()
+           .Bind(section, opt => opt.BindNonPublicProperties = true)
+           .ValidateDataAnnotations();
+    }
+    #endregion
 }
