@@ -113,10 +113,15 @@ public static class ProgramExtensions
     public static void AddCustomApplicationServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<IEventBus, DaprEventBus>();
-        builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+        builder.Services.AddHttpContextAccessor();
+        //builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         builder.Services.AddScoped<IOrderRepository, OrderRepository>();
         builder.Services.AddScoped<IIdentityService, IdentityService>();
         builder.Services.AddScoped<IEmailService, EmailService>();
+
+        builder.Services.AddScoped<IOrdersService, OrdersService>();
+        builder.Services.AddScoped<IUpdateOrderStatusEventService, UpdateOrderStatusEventService>();
+        builder.Services.AddScoped<IOrderingProcessEventService, OrderingProcessEventService>();
 
         builder.Services.Configure<OrderingSettings>(builder.Configuration);
     }

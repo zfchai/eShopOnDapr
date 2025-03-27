@@ -1,6 +1,4 @@
-﻿using Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks.Extensions;
-using Microsoft.eShopOnDapr.Services.Ordering.API.Extensions;
-
+﻿
 var appName = "Ordering API";
 var builder = WebApplication.CreateBuilder(args);
 

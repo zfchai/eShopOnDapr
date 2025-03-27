@@ -4,12 +4,10 @@
 [Authorize]
 [ApiController]
 public class OrdersController(
-    IOrderRepository orderRepository,
-    IIdentityService identityService
+    ILogger<OrdersController> logger,
+    IOrdersService ordersService
     ) : ControllerBase
 {
-    private readonly IOrderRepository _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
-    private readonly IIdentityService _identityService = identityService ?? throw new ArgumentNullException(nameof(identityService));
 
     [Route("{orderNumber:int}/cancel")]
     [HttpPut]
@@ -17,15 +15,10 @@ public class OrdersController(
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CancelOrderAsync(int orderNumber)
     {
-        var orderingProcessActor = await GetOrderingProcessActorAsync(orderNumber);
+        bool result = await ordersService.CancelOrderAsync(orderNumber);
+        if (result) return Ok();
 
-        var result = await orderingProcessActor.CancelAsync();
-        if (!result)
-        {
-            return BadRequest();
-        }
-
-        return Ok();
+        return BadRequest();
     }
 
     [Route("{orderNumber:int}/ship")]
@@ -34,20 +27,10 @@ public class OrdersController(
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ShipOrderAsync(int orderNumber, [FromHeader(Name = "x-requestid")] string requestId)
     {
-        bool result = false;
+        bool result = await ordersService.ShipOrderAsync(orderNumber, requestId);
+        if (result) return Ok();
 
-        if (Guid.TryParse(requestId, out Guid guid) && guid != Guid.Empty)
-        {
-            var orderingProcessActor = await GetOrderingProcessActorAsync(orderNumber);
-            result = await orderingProcessActor.ShipAsync();
-        }
-
-        if (!result)
-        {
-            return BadRequest();
-        }
-
-        return Ok();
+        return BadRequest();
     }
 
     [Route("{orderNumber:int}")]
@@ -56,37 +39,21 @@ public class OrdersController(
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> GetOrderAsync(int orderNumber)
     {
-        var buyerId = _identityService.GetUserIdentity();
-
-        var order = await _orderRepository.GetOrderByOrderNumberAsync(orderNumber);
-
-        if (order?.BuyerId == buyerId)
-        {
-            return Ok(order);
-        }
+        var (isok, order) = await ordersService.GetOrderAsync(orderNumber);
+        if (isok) return Ok(order);
 
         return NotFound();
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<OrderSummary>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<OrderSummary>>> GetOrdersAsync()
+    [ProducesResponseType(typeof(IAsyncEnumerable<OrderSummary>), StatusCodes.Status200OK)]
+    public async IAsyncEnumerable<OrderSummary> GetOrdersAsync()
     {
-        var buyerId = _identityService.GetUserIdentity();
-        var orders = await _orderRepository.GetOrdersFromBuyerAsync(buyerId);
-
-        return Ok(orders.OrderByDescending(o => o.OrderNumber));
-    }
-
-    private async Task<IOrderingProcessActor> GetOrderingProcessActorAsync(int orderNumber)
-    {
-        var order = await _orderRepository.GetOrderByOrderNumberAsync(orderNumber);
-        if (order == null)
+        var orderSummaries = ordersService.GetOrdersAsync();
+        await foreach (var item in orderSummaries)
         {
-            throw new ArgumentException($"Order with order number {orderNumber} not found.");
-        }
-
-        var actorId = new ActorId(order.Id.ToString());
-        return ActorProxy.Create<IOrderingProcessActor>(actorId, nameof(OrderingProcessActor));
+            yield return item!;
+        } 
     }
+
 }

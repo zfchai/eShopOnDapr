@@ -1,4 +1,5 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API;
+﻿
+namespace Microsoft.eShopOnDapr.Services.API.Abstraction.Ordering.Settings;
 
 public class OrderingSettings
 {

@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers;
+﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.Hubs;
 
 [Authorize]
 public class NotificationsHub : Hub

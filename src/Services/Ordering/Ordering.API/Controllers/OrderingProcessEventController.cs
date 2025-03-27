@@ -4,72 +4,53 @@
 [ApiController]
 public class OrderingProcessEventController(
     ILogger<OrderingProcessEventController> logger,
-    IActorProxyFactory actorProxyFactory
+    IOrderingProcessEventService orderingProcessEventService
     ) : ControllerBase
 {
     private const string DAPR_PUBSUB_NAME = "eshopondapr-pubsub";
-    private readonly ILogger<OrderingProcessEventController> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     [HttpPost("UserCheckoutAccepted")]
     [Topic(DAPR_PUBSUB_NAME, "UserCheckoutAcceptedIntegrationEvent")]
     public async Task HandleAsync(UserCheckoutAcceptedIntegrationEvent integrationEvent)
     {
-        if (integrationEvent.RequestId != Guid.Empty)
-        {
-            var orderingProcess = GetOrderingProcessActor(integrationEvent.RequestId);
-
-            await orderingProcess.SubmitAsync(
-                integrationEvent.UserId, integrationEvent.UserEmail, integrationEvent.Street, integrationEvent.City,
-                integrationEvent.State, integrationEvent.Country, integrationEvent.Basket);
-        }
-        else
-        {
-            _logger.LogWarning("Invalid IntegrationEvent - RequestId is missing - {@IntegrationEvent}", integrationEvent);
-        }
+        await orderingProcessEventService.HandleAsync(integrationEvent);
     }
 
     [HttpPost("OrderStockConfirmed")]
     [Topic(DAPR_PUBSUB_NAME, "OrderStockConfirmedIntegrationEvent")]
-    public Task HandleAsync(OrderStockConfirmedIntegrationEvent integrationEvent)
+    public async Task HandleAsync(OrderStockConfirmedIntegrationEvent integrationEvent)
     {
-        return GetOrderingProcessActor(integrationEvent.OrderId)
+        await orderingProcessEventService.GetOrderingProcessActor(integrationEvent.OrderId)
             .NotifyStockConfirmedAsync();
     }
 
     [HttpPost("OrderStockRejected")]
     [Topic(DAPR_PUBSUB_NAME, "OrderStockRejectedIntegrationEvent")]
-    public Task HandleAsync(OrderStockRejectedIntegrationEvent integrationEvent)
+    public async Task HandleAsync(OrderStockRejectedIntegrationEvent integrationEvent)
     {
         var outOfStockItems = integrationEvent.OrderStockItems
             .FindAll(c => !c.HasStock)
             .Select(c => c.ProductId)
             .ToList();
 
-        return GetOrderingProcessActor(integrationEvent.OrderId)
+        await orderingProcessEventService.GetOrderingProcessActor(integrationEvent.OrderId)
             .NotifyStockRejectedAsync(outOfStockItems);
     }
 
     [HttpPost("OrderPaymentSucceeded")]
     [Topic(DAPR_PUBSUB_NAME, "OrderPaymentSucceededIntegrationEvent")]
-    public Task HandleAsync(OrderPaymentSucceededIntegrationEvent integrationEvent)
+    public async Task HandleAsync(OrderPaymentSucceededIntegrationEvent integrationEvent)
     {
-        return GetOrderingProcessActor(integrationEvent.OrderId)
+        await orderingProcessEventService.GetOrderingProcessActor(integrationEvent.OrderId)
             .NotifyPaymentSucceededAsync();
     }
 
     [HttpPost("OrderPaymentFailed")]
     [Topic(DAPR_PUBSUB_NAME, "OrderPaymentFailedIntegrationEvent")]
-    public Task HandleAsync(OrderPaymentFailedIntegrationEvent integrationEvent)
+    public async Task HandleAsync(OrderPaymentFailedIntegrationEvent integrationEvent)
     {
-        return GetOrderingProcessActor(integrationEvent.OrderId)
+        await orderingProcessEventService.GetOrderingProcessActor(integrationEvent.OrderId)
             .NotifyPaymentFailedAsync();
     }
 
-    private IOrderingProcessActor GetOrderingProcessActor(Guid orderId)
-    {
-        var actorId = new ActorId(orderId.ToString());
-        return actorProxyFactory.CreateActorProxy<IOrderingProcessActor>(
-            actorId,
-            nameof(OrderingProcessActor));
-    }
 }

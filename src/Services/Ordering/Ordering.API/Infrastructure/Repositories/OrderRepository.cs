@@ -53,9 +53,9 @@ public class OrderRepository : IOrderRepository
             .SingleOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<OrderSummary>> GetOrdersFromBuyerAsync(string buyerId)
+    public async IAsyncEnumerable<OrderSummary?> GetOrdersFromBuyerAsync(string buyerId)
     {
-        return await _orderingContext.Orders
+        var orderSummaries = await _orderingContext.Orders
             .Where(o => o.BuyerId == buyerId)
             .Include(o => o.OrderItems)
             .Select(o => new OrderSummary(
@@ -64,6 +64,12 @@ public class OrderRepository : IOrderRepository
                 o.OrderDate,
                 o.OrderStatus,
                 o.GetTotal()))
+            .OrderByDescending(o => o.OrderNumber)
             .ToListAsync();
+
+        foreach (var item in orderSummaries)
+        {
+            yield return item;
+        }
     }
 }
