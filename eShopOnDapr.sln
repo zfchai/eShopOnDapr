@@ -85,6 +85,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Healthchecks", "src\Buildin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebStatus", "src\Web\WebStatus\WebStatus.csproj", "{1489AC81-8724-4077-9241-D0384BA0CB6C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Foundations", "Foundations", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.API.Abstraction", "src\Foundations\Services.API.Abstraction\Services.API.Abstraction.csproj", "{EAADC0AA-B0E7-4FAB-BD38-93AA5423A8E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -139,6 +143,10 @@ Global
 		{1489AC81-8724-4077-9241-D0384BA0CB6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1489AC81-8724-4077-9241-D0384BA0CB6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1489AC81-8724-4077-9241-D0384BA0CB6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAADC0AA-B0E7-4FAB-BD38-93AA5423A8E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAADC0AA-B0E7-4FAB-BD38-93AA5423A8E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAADC0AA-B0E7-4FAB-BD38-93AA5423A8E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAADC0AA-B0E7-4FAB-BD38-93AA5423A8E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -170,6 +178,8 @@ Global
 		{60441B2A-69B7-4BD1-B4FE-CCA68DFF4311} = {6E3302E8-41FD-490C-920B-D5929B5DE0D9}
 		{8AA9B06A-8D20-4F3A-BD64-6DE81940B1E7} = {60441B2A-69B7-4BD1-B4FE-CCA68DFF4311}
 		{1489AC81-8724-4077-9241-D0384BA0CB6C} = {EF69A3A6-A184-4C23-B9FB-034DAD2913C6}
+		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {CBF27136-5472-4217-AA88-C258F865E2D2}
+		{EAADC0AA-B0E7-4FAB-BD38-93AA5423A8E2} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FBED0B95-87F8-439B-BC1E-382C8ABD4F2E}
