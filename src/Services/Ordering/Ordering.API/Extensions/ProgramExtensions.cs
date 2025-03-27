@@ -1,5 +1,4 @@
 ﻿// Only use in this file to avoid conflicts with Microsoft.Extensions.Logging
-using Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks.Extensions;
 using Serilog;
 
 namespace Microsoft.eShopOnDapr.Services.Ordering.API.Extensions;
@@ -7,12 +6,19 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Extensions;
 public static class ProgramExtensions
 {
     private const string AppName = "Ordering API";
+    private const string DbConnString = "ConnectionStrings:OrderingDB";
 
     public static void AddCustomConfiguration(this WebApplicationBuilder builder)
     {
         builder.Configuration.AddDaprSecretStore(
            "eshopondapr-secretstore",
            new DaprClientBuilder().Build());
+    }
+
+    public static void AddCustomOptions(this WebApplicationBuilder builder)
+    {
+        builder.AddCustomOptions<ConnectionStrings>(nameof(ConnectionStrings));
+
     }
 
     public static void AddCustomSerilog(this WebApplicationBuilder builder)
@@ -100,7 +106,7 @@ public static class ProgramExtensions
             .AddCheck("self", () => HealthCheckResult.Healthy())
             .AddDapr()
             .AddNpgSql(
-                builder.Configuration["ConnectionStrings:OrderingDB"]!,
+                builder.Configuration[DbConnString]!,
                 name: "OrderingDB-check",
                 tags: ["orderdb"]);
 
@@ -117,7 +123,7 @@ public static class ProgramExtensions
 
     public static void AddCustomDatabase(this WebApplicationBuilder builder) =>
         builder.Services.AddDbContext<OrderingDbContext>(
-            options => options.UseNpgsql(builder.Configuration["ConnectionStrings:OrderingDB"]!));
+            options => options.UseNpgsql(builder.Configuration[DbConnString]!));
 
     public static void ApplyDatabaseMigration(this WebApplication app)
     {
@@ -155,4 +161,23 @@ public static class ProgramExtensions
 
         return Policy.NoOp();
     }
+
+    #region CustomOptions
+    internal static void AddCustomOptions<TOptions>(this WebApplicationBuilder builder, string propertyName)
+        where TOptions : class
+    {
+        var config = builder.Configuration;
+        var services = builder.Services;
+        var section = config.GetSection(propertyName);
+        services.AddOptions<TOptions>(section);
+    }
+
+    internal static void AddOptions<TOptions>(this IServiceCollection services, IConfigurationSection section)
+        where TOptions : class
+    {
+        services.AddOptions<TOptions>()
+           .Bind(section, opt => opt.BindNonPublicProperties = true)
+           .ValidateDataAnnotations();
+    }
+    #endregion
 }
