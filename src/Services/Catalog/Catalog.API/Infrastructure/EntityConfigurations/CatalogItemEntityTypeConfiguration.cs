@@ -1,10 +1,10 @@
 ﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.EntityConfigurations;
 
-public sealed class CatalogItemEntityTypeConfiguration : IEntityTypeConfiguration<CatalogItem>
+public sealed class CatalogItemEntityTypeConfiguration(string tablePrefix) : IEntityTypeConfiguration<CatalogItem>
 {
     public void Configure(EntityTypeBuilder<CatalogItem> builder)
     {
-        builder.ToTable("CatalogItem");
+        builder.ToTable($"{tablePrefix}_CatalogItems");
 
         builder.Property(item => item.Id)
             .UseHiLo("catalog_hilo")

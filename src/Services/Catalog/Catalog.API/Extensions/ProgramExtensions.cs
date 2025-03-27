@@ -6,12 +6,19 @@ namespace Microsoft.eShopOnDapr.Services.Catalog.API.Extensions;
 public static class ProgramExtensions
 {
     private const string AppName = "Catalog API";
+    private const string DbConnString = "ConnectionStrings:CatalogDB";
 
     public static void AddCustomConfiguration(this WebApplicationBuilder builder)
     {
         builder.Configuration.AddDaprSecretStore(
            "eshopondapr-secretstore",
            new DaprClientBuilder().Build());
+    }
+
+    public static void AddCustomOptions(this WebApplicationBuilder builder)
+    {
+        builder.AddCustomOptions<ConnectionStrings>(nameof(ConnectionStrings));
+
     }
 
     public static void AddCustomSerilog(this WebApplicationBuilder builder)
@@ -48,7 +55,7 @@ public static class ProgramExtensions
             .AddCheck("self", () => HealthCheckResult.Healthy())
             .AddDapr()
             .AddNpgSql(
-                builder.Configuration["ConnectionStrings:CatalogDB"]!,
+                builder.Configuration[DbConnString]!,
                 name: "CatalogDB-check",
                 tags: ["catalogdb"]);
 
@@ -60,11 +67,9 @@ public static class ProgramExtensions
         builder.Services.AddScoped<OrderStatusChangedToPaidIntegrationEventHandler>();
     }
 
-    public static void AddCustomDatabase(this WebApplicationBuilder builder)
-    {
+    public static void AddCustomDatabase(this WebApplicationBuilder builder) =>
         builder.Services.AddDbContext<CatalogDbContext>(
-            options => options.UseNpgsql(builder.Configuration["ConnectionStrings:CatalogDB"]!));
-    }
+            options => options.UseNpgsql(builder.Configuration[DbConnString]!));
 
     public static void ApplyDatabaseMigration(this WebApplication app)
     {
@@ -96,11 +101,31 @@ public static class ProgramExtensions
                             exception.GetType().Name,
                             exception.Message,
                             retry,
-                            configuration["ConnectionStrings:CatalogDB"]);
+                            configuration[DbConnString]);
                     }
                 );
         }
 
         return Policy.NoOp();
     }
+
+    #region CustomOptions
+    internal static void AddCustomOptions<TOptions>(this WebApplicationBuilder builder, string propertyName)
+        where TOptions : class
+    {
+        var config = builder.Configuration;
+        var services = builder.Services;
+        var section = config.GetSection(propertyName);
+        services.AddOptions<TOptions>(section);
+    }
+
+    internal static void AddOptions<TOptions>(this IServiceCollection services, IConfigurationSection section)
+        where TOptions : class
+    {
+        services.AddOptions<TOptions>()
+           .Bind(section, opt => opt.BindNonPublicProperties = true)
+           .ValidateDataAnnotations();
+    } 
+    #endregion
+
 }

@@ -1,10 +1,10 @@
 ﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.EntityConfigurations;
 
-public sealed class CatalogBrandEntityTypeConfiguration : IEntityTypeConfiguration<CatalogBrand>
+public sealed class CatalogBrandEntityTypeConfiguration(string tablePrefix) : IEntityTypeConfiguration<CatalogBrand>
 {
     public void Configure(EntityTypeBuilder<CatalogBrand> builder)
     {
-        builder.ToTable("CatalogBrand");
+        builder.ToTable($"{tablePrefix}_CatalogBrands");
 
         builder.HasKey(brand => brand.Id);
 

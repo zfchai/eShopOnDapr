@@ -41,6 +41,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\BuildingBlocks\EventBus\EventBus.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\Healthchecks\Healthchecks.csproj" />
+    <ProjectReference Include="..\..\..\Foundations\Services.API.Abstraction\Services.API.Abstraction.csproj" />
   </ItemGroup>
 
   <ItemGroup>

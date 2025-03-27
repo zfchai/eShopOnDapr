@@ -1,4 +1,6 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure;
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+
+namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure;
 
 public class CatalogDbContext(DbContextOptions<CatalogDbContext> options) : DbContext(options)
 {
@@ -8,8 +10,11 @@ public class CatalogDbContext(DbContextOptions<CatalogDbContext> options) : DbCo
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.ApplyConfiguration(new CatalogBrandEntityTypeConfiguration());
-        builder.ApplyConfiguration(new CatalogItemEntityTypeConfiguration());
-        builder.ApplyConfiguration(new CatalogTypeEntityTypeConfiguration());
+        var dbSettings = this.GetService<ConnectionStrings>();
+        var tablePrefix = dbSettings.TablePrefix.IfNullOrWhiteSpaceAs("eShorp");
+
+        builder.ApplyConfiguration(new CatalogBrandEntityTypeConfiguration(tablePrefix));
+        builder.ApplyConfiguration(new CatalogItemEntityTypeConfiguration(tablePrefix));
+        builder.ApplyConfiguration(new CatalogTypeEntityTypeConfiguration(tablePrefix));
     }     
 }

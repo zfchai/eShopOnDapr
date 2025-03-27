@@ -9,6 +9,8 @@ global using Microsoft.eShopOnDapr.BuildingBlocks.EventBus;
 global using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Abstractions;
 global using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
 global using Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks.Extensions;
+global using Microsoft.eShopOnDapr.Services.API.Abstraction.Catalog.Settings;
+global using Microsoft.eShopOnDapr.Services.API.Abstraction.Utilities;
 global using Microsoft.eShopOnDapr.Services.Catalog.API.Extensions;
 global using Microsoft.eShopOnDapr.Services.Catalog.API.Services;
 global using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure;
