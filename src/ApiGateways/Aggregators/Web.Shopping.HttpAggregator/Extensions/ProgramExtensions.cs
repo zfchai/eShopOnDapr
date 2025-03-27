@@ -156,7 +156,8 @@ public static class ProgramExtensions
             _ => new CatalogService(sp, DaprClient.CreateInvokeHttpClient("catalog-api")));
     }
 
-    public static void AddCustomOptions<TOptions>(this WebApplicationBuilder builder, string propertyName) 
+    #region CustomOptions
+    internal static void AddCustomOptions<TOptions>(this WebApplicationBuilder builder, string propertyName)
         where TOptions : class
     {
         var config = builder.Configuration;
@@ -165,13 +166,14 @@ public static class ProgramExtensions
         services.AddOptions<TOptions>(section);
     }
 
-    internal static void AddOptions<TOptions>(this IServiceCollection services, IConfigurationSection section) 
+    internal static void AddOptions<TOptions>(this IServiceCollection services, IConfigurationSection section)
         where TOptions : class
     {
         services.AddOptions<TOptions>()
            .Bind(section, opt => opt.BindNonPublicProperties = true)
            .ValidateDataAnnotations();
     }
+    #endregion
 
 }
 
