@@ -1,7 +1,7 @@
 ﻿
 namespace Microsoft.eShopOnDapr.Services.API.Abstraction.Ordering.Settings;
 
-public class OrderingSettings
+public class OrderingSetting
 {
     public int GracePeriodTime { get; set; }
 

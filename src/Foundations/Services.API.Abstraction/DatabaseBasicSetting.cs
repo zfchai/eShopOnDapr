@@ -1,6 +1,6 @@
 ﻿namespace Microsoft.eShopOnDapr.Services.API.Abstraction;
 
-public class DatabaseBasicSettings
+public class DatabaseBasicSetting
 {
     public string TablePrefix { get; set; } = null!;
 }

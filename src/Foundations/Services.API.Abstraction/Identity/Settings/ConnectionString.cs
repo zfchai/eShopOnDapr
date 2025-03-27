@@ -1,6 +1,6 @@
 ﻿namespace Microsoft.eShopOnDapr.Services.API.Abstraction.Identity.Settings;
 
-public sealed class ConnectionStrings : DatabaseBasicSettings
+public sealed class ConnectionString : DatabaseBasicSetting
 {
     public string IdentityDB { get; set; } = null!;
 }
