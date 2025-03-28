@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Identity.API;
+﻿namespace Microsoft.eShopOnDapr.Services.Identity.API.Infrastructure.Database;
 
 public class SeedData
 {
@@ -94,8 +94,7 @@ public class SeedData
 
     private static AsyncPolicy CreateRetryPolicy(IConfiguration configuration, ILogger logger)
     {
-        var retryMigrations = false;
-        bool.TryParse(configuration["RetryMigrations"], out retryMigrations);
+        bool.TryParse(configuration["RetryMigrations"], out bool retryMigrations);
 
         // Only use a retry policy if configured to do so.
         // When running in an orchestrator/K8s, it will take care of restarting failed services.

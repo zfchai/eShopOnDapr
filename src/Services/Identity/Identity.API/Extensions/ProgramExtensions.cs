@@ -10,9 +10,8 @@ public static class ProgramExtensions
 
     public static void AddCustomConfiguration(this WebApplicationBuilder builder)
     {
-        builder.Configuration.AddDaprSecretStore(
-           "eshopondapr-secretstore",
-           new DaprClientBuilder().Build());
+        var daprClient = new DaprClientBuilder().Build();
+        builder.Configuration.AddDaprSecretStore("eshopondapr-secretstore", daprClient);
     }
 
     public static void AddCustomOptions(this WebApplicationBuilder builder)
@@ -40,14 +39,17 @@ public static class ProgramExtensions
         builder.Services.AddControllersWithViews();
     }
 
-    public static void AddCustomDatabase(this WebApplicationBuilder builder) =>
-        builder.Services.AddDbContext<ApplicationDbContext>(
-            options => options.UseNpgsql(builder.Configuration[DbConnString]));
+    public static void AddCustomDatabase(this WebApplicationBuilder builder)
+    {
+        var connectionString = builder.Configuration[DbConnString];
+        builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
+    }
 
     public static void AddCustomIdentity(this WebApplicationBuilder builder) =>
-        builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-                        .AddEntityFrameworkStores<ApplicationDbContext>()
-                        .AddDefaultTokenProviders();
+        builder.Services
+           .AddIdentity<ApplicationUser, IdentityRole>()
+           .AddEntityFrameworkStores<ApplicationDbContext>()
+           .AddDefaultTokenProviders();
 
     public static void AddCustomIdentityServer(this WebApplicationBuilder builder)
     {
@@ -76,12 +78,14 @@ public static class ProgramExtensions
         builder.Services.AddAuthentication();
     }
 
-    public static void AddCustomHealthChecks(this WebApplicationBuilder builder) =>
-        builder.Services.AddHealthChecks()
-                        .AddCheck("self", () => HealthCheckResult.Healthy())
-                        .AddNpgSql(builder.Configuration[DbConnString],
-                            name: "IdentityDB-check",
-                            tags: ["IdentityDB"]);
+    public static void AddCustomHealthChecks(this WebApplicationBuilder builder)
+    {
+        var connectionString = builder.Configuration[DbConnString];
+        builder.Services
+            .AddHealthChecks()
+            .AddCheck("self", () => HealthCheckResult.Healthy())
+            .AddNpgSql(connectionString, name: "IdentityDB-check", tags: ["IdentityDB"]);
+    }
 
     public static void AddCustomApplicationServices(this WebApplicationBuilder builder)
     {
