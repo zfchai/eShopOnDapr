@@ -17,7 +17,7 @@ public static class ProgramExtensions
 
     public static void AddCustomOptions(this WebApplicationBuilder builder)
     {
-        builder.AddCustomOptions<ConnectionStrings>(nameof(ConnectionStrings));
+        // Add custom extension configuration
 
     }
 

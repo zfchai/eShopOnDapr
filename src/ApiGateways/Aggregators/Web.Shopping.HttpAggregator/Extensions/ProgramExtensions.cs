@@ -17,7 +17,7 @@ public static class ProgramExtensions
         builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                              .AddJsonFile($"appsettings.{envName}.json", optional: true, reloadOnChange: true);
 
-        // Build the complete path of MyAdata/Config/appsetings.json
+        // Build the complete path of AppData/Config/appsetings.json
         var customDefaultConfigPath = Path.Combine(appRoot, "AppData", "Config", "appsettings.json");
         var customEnvConfigPath = Path.Combine(appRoot, "AppData", "Config", $"appsettings.{envName}.json");
 

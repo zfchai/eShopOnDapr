@@ -12,7 +12,7 @@ public class UpdateOrderStatusEventService(
 
     public async Task HandleAsync(
         OrderStatusChangedToSubmittedIntegrationEvent integrationEvent,
-        OrderingSettings ordering,
+        OrderingSetting ordering,
         IEmailService emailService)
     {
         // Gets the order details from Actor state.

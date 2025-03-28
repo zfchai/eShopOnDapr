@@ -17,7 +17,7 @@ public static class ProgramExtensions
 
     public static void AddCustomOptions(this WebApplicationBuilder builder)
     {
-        builder.AddCustomOptions<ConnectionStrings>(nameof(ConnectionStrings));
+        // Add custom extension configuration
 
     }
 
@@ -122,8 +122,6 @@ public static class ProgramExtensions
         builder.Services.AddScoped<IOrdersService, OrdersService>();
         builder.Services.AddScoped<IUpdateOrderStatusEventService, UpdateOrderStatusEventService>();
         builder.Services.AddScoped<IOrderingProcessEventService, OrderingProcessEventService>();
-
-        builder.Services.Configure<OrderingSettings>(builder.Configuration);
     }
 
     public static void AddCustomDatabase(this WebApplicationBuilder builder) =>

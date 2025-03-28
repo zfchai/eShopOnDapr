@@ -4,9 +4,6 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure;
 
 public class OrderingDbContext : DbContext
 {
-    public DbSet<Order> Orders => Set<Order>();
-    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
-
     public OrderingDbContext(DbContextOptions<OrderingDbContext> options)
         : base(options)
     {
@@ -14,10 +11,15 @@ public class OrderingDbContext : DbContext
         ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
     }
 
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+
+    private const string _tablePrefix = "ConnectionStrings:TablePrefix";
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        var dbSettings = this.GetService<ConnectionStrings>();
-        var tablePrefix = dbSettings.TablePrefix.IfNullOrWhiteSpaceAs("eShorp");
+        var dbSettings = this.GetService<IConfiguration>();
+        var tablePrefix = dbSettings[_tablePrefix]!.IfNullOrWhiteSpaceAs("eShorp");
 
         modelBuilder.ApplyConfiguration(new OrderEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new OrderItemEntityTypeConfiguration());

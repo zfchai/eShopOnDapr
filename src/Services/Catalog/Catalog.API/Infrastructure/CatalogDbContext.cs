@@ -8,10 +8,12 @@ public class CatalogDbContext(DbContextOptions<CatalogDbContext> options) : DbCo
     public DbSet<CatalogItem> CatalogItems => Set<CatalogItem>();
     public DbSet<CatalogType> CatalogTypes => Set<CatalogType>();
 
+    private const string _tablePrefix = "ConnectionStrings:TablePrefix";
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        var dbSettings = this.GetService<ConnectionStrings>();
-        var tablePrefix = dbSettings.TablePrefix.IfNullOrWhiteSpaceAs("eShorp");
+        var dbSettings = this.GetService<IConfiguration>();
+        var tablePrefix = dbSettings[_tablePrefix]!.IfNullOrWhiteSpaceAs("eShorp");
 
         builder.ApplyConfiguration(new CatalogBrandEntityTypeConfiguration(tablePrefix));
         builder.ApplyConfiguration(new CatalogItemEntityTypeConfiguration(tablePrefix));

@@ -15,10 +15,10 @@ public class UpdateOrderStatusEventController(
     [Topic(DAPR_PUBSUB_NAME, nameof(OrderStatusChangedToSubmittedIntegrationEvent))]
     public async Task HandleAsync(
         OrderStatusChangedToSubmittedIntegrationEvent integrationEvent,
-        [FromServices] IOptions<OrderingSettings> settings,
+        [FromServices] IOptions<OrderingSetting> setting,
         [FromServices] IEmailService emailService)
     {
-        await updateOrderStatusEventService.HandleAsync(integrationEvent, settings.Value, emailService);
+        await updateOrderStatusEventService.HandleAsync(integrationEvent, setting.Value, emailService);
     }
 
     [HttpPost("OrderStatusChangedToAwaitingStockValidation")]

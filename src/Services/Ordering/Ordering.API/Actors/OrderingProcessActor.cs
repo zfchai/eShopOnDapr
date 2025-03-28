@@ -2,7 +2,7 @@
 
 public class OrderingProcessActor(
     ILogger<OrderingProcessActor> logger,
-    IOptions<OrderingSettings> settings,
+    IOptions<OrderingSetting> settings,
     IEventBus eventBus,
     ActorHost host
     ) : Actor(host), IOrderingProcessActor, IRemindable
@@ -17,7 +17,7 @@ public class OrderingProcessActor(
     private const string PaymentFailedReminder = "PaymentFailed";
     private int? _preMethodOrderStatusId;
 
-    private readonly OrderingSettings _orderingSettings = settings.Value;
+    private readonly OrderingSetting _orderingSetting = settings.Value;
 
     private Guid OrderId => Guid.Parse(Id.GetId());
 
@@ -62,7 +62,7 @@ public class OrderingProcessActor(
         await RegisterReminderAsync(
             GracePeriodElapsedReminder,
             null,
-            TimeSpan.FromSeconds(_orderingSettings.GracePeriodTime),
+            TimeSpan.FromSeconds(_orderingSetting.GracePeriodTime),
             TimeSpan.FromMilliseconds(-1));
 
         await eventBus.PublishAsync(new OrderStatusChangedToSubmittedIntegrationEvent(

@@ -4,7 +4,7 @@ public interface IUpdateOrderStatusEventService
 {
     Task HandleAsync(
         OrderStatusChangedToSubmittedIntegrationEvent integrationEvent,
-        OrderingSettings ordering,
+        OrderingSetting ordering,
         IEmailService emailService);
 
     Task UpdateReadModelAndSendNotificationAsync(
