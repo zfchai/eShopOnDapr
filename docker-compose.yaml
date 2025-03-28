@@ -15,8 +15,11 @@ services:
     image: datalust/seq:latest
 
   # Use the Azure SQL Edge version so we can also run on Apple Sillicon (thanks @ChristianWeyer)
-  sqldata:
-    image: mcr.microsoft.com/azure-sql-edge
+  #sqldata:
+  #  image: mcr.microsoft.com/azure-sql-edge
+
+  pgdata:
+    image: postgres:16.6-alpine3.20
 
   zipkin:
     image: openzipkin/zipkin-slim:latest
@@ -48,7 +51,7 @@ services:
       context: .
       dockerfile: src/Services/Catalog/Catalog.API/Dockerfile
     depends_on:
-      - sqldata
+      - pgdata
 
   catalog-api-dapr:
     image: "daprio/daprd:1.15.2"
@@ -62,7 +65,7 @@ services:
       context: .
       dockerfile: src/Services/Identity/Identity.API/Dockerfile
     depends_on:
-      - sqldata
+      - pgdata
 
   identity-api-dapr:
     image: "daprio/daprd:1.15.2"
@@ -76,7 +79,7 @@ services:
       context: .
       dockerfile: src/Services/Ordering/Ordering.API/Dockerfile
     depends_on:
-      - sqldata
+      - pgdata
 
   ordering-api-dapr:
     image: "daprio/daprd:1.15.2"
@@ -106,7 +109,7 @@ services:
       - catalog-api
       - identity-api
       - ordering-api
-      - sqldata
+      - pgdata
 
   webshoppingagg-dapr:
     image: "daprio/daprd:1.15.2"

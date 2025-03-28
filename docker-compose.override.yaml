@@ -27,14 +27,14 @@ services:
     ports:
       - "5340:80"
 
-  sqldata:
+  pgdata:
     environment:
-      - SA_PASSWORD=Pass@word
-      - ACCEPT_EULA=Y
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Pass@word
     ports:
-      - "5433:1433"
+      - "15432:5432"
     volumes:
-      - eshop-sqldata:/var/opt/mssql
+      - eshop-pgdata:/var/opt/pgsql
 
   zipkin:
     ports:
@@ -237,9 +237,9 @@ services:
       - "50000:50000"
 
 volumes:
-  eshop-sqldata:
+  eshop-pgdata:
     external: false
-  eshop-nosqldata:
+  eshop-nopgdata:
     external: false
   eshop-basketdata:
     external: false
