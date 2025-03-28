@@ -1,8 +1,8 @@
 ﻿namespace Microsoft.eShopOnDapr.Services.Identity.API.Infrastructure.Database;
 
-public class SeedData
+internal class SeedData
 {
-    public static async Task EnsureSeedData(IServiceScope scope, IConfiguration configuration, ILogger logger)
+    public static async Task EnsureSeedDataAsync(IServiceScope scope, IConfiguration configuration, ILogger logger)
     {
         var retryPolicy = CreateRetryPolicy(configuration, logger);
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -12,85 +12,72 @@ public class SeedData
             await context.Database.MigrateAsync();
 
             var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            var alice = await userMgr.FindByNameAsync("alice");
 
-            if (alice == null)
+            // create alice
+            await CreateUserAsync(userMgr, logger, "Pass123$", new ApplicationUser
             {
-                alice = new ApplicationUser
-                {
-                    UserName = "alice",
-                    Email = "AliceSmith@email.com",
-                    EmailConfirmed = true,
-                    CardHolderName = "Alice Smith",
-                    CardNumber = "4012888888881881",
-                    CardType = 1,
-                    City = "Redmond",
-                    Country = "U.S.",
-                    Expiration = "12/20",
-                    Id = Guid.NewGuid().ToString(),
-                    LastName = "Smith",
-                    Name = "Alice",
-                    PhoneNumber = "1234567890",
-                    ZipCode = "98052",
-                    State = "WA",
-                    Street = "15703 NE 61st Ct",
-                    SecurityNumber = "123"
-                };
+                UserName = "alice",
+                Email = "AliceSmith@email.com",
+                EmailConfirmed = true,
+                CardHolderName = "Alice Smith",
+                CardNumber = "4012888888881881",
+                CardType = 1,
+                City = "Redmond",
+                Country = "U.S.",
+                Expiration = "12/20",
+                Id = Guid.NewGuid().ToString(),
+                LastName = "Smith",
+                Name = "Alice",
+                PhoneNumber = "1234567890",
+                ZipCode = "98052",
+                State = "WA",
+                Street = "15703 NE 61st Ct",
+                SecurityNumber = "123"
+            });
 
-                var result = userMgr.CreateAsync(alice, "Pass123$").Result;
-
-                if (!result.Succeeded)
-                {
-                    throw new Exception(result.Errors.First().Description);
-                }
-
-                logger.LogDebug("alice created");
-            }
-            else
+            // create bob
+            await CreateUserAsync(userMgr, logger, "Pass123$", new ApplicationUser
             {
-                logger.LogDebug("alice already exists");
-            }
-
-            var bob = await userMgr.FindByNameAsync("bob");
-
-            if (bob == null)
-            {
-                bob = new ApplicationUser
-                {
-                    UserName = "bob",
-                    Email = "BobSmith@email.com",
-                    EmailConfirmed = true,
-                    CardHolderName = "Bob Smith",
-                    CardNumber = "4012888888881881",
-                    CardType = 1,
-                    City = "Redmond",
-                    Country = "U.S.",
-                    Expiration = "12/20",
-                    Id = Guid.NewGuid().ToString(),
-                    LastName = "Smith",
-                    Name = "Bob",
-                    PhoneNumber = "1234567890",
-                    ZipCode = "98052",
-                    State = "WA",
-                    Street = "15703 NE 61st Ct",
-                    SecurityNumber = "456"
-                };
-
-                var result = await userMgr.CreateAsync(bob, "Pass123$");
-
-                if (!result.Succeeded)
-                {
-                    throw new Exception(result.Errors.First().Description);
-                }
-
-                logger.LogDebug("bob created");
-            }
-            else
-            {
-                logger.LogDebug("bob already exists");
-            }
+                UserName = "bob",
+                Email = "BobSmith@email.com",
+                EmailConfirmed = true,
+                CardHolderName = "Bob Smith",
+                CardNumber = "4012888888881881",
+                CardType = 1,
+                City = "Redmond",
+                Country = "U.S.",
+                Expiration = "12/20",
+                Id = Guid.NewGuid().ToString(),
+                LastName = "Smith",
+                Name = "Bob",
+                PhoneNumber = "1234567890",
+                ZipCode = "98052",
+                State = "WA",
+                Street = "15703 NE 61st Ct",
+                SecurityNumber = "456"
+            });
         });
     }
+
+    private static async Task CreateUserAsync(UserManager<ApplicationUser> userMgr, ILogger logger, string password, ApplicationUser appUser)
+    {
+        var user = await userMgr.FindByNameAsync(appUser.UserName);
+        if (user == null)
+        {
+            var result = await userMgr.CreateAsync(user, password);
+            if (!result.Succeeded)
+            {
+                throw new Exception(result.Errors.First().Description);
+            }
+
+            logger.LogDebug($"{appUser.UserName} created");
+        }
+        else
+        {
+            logger.LogDebug($"{appUser.UserName} already exists");
+        }
+    }
+
 
     private static AsyncPolicy CreateRetryPolicy(IConfiguration configuration, ILogger logger)
     {

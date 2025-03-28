@@ -79,7 +79,7 @@ try
     // migrations instead.
     using (var scope = app.Services.CreateScope())
     {
-        await SeedData.EnsureSeedData(scope, app.Configuration, app.Logger);
+        await SeedData.EnsureSeedDataAsync(scope, app.Configuration, app.Logger);
     }
 
     app.Logger.LogInformation("Starting web host ({ApplicationName})...", appName);
