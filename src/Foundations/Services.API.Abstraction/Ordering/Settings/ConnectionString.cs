@@ -1,4 +1,6 @@
-﻿namespace Microsoft.eShopOnDapr.Services.API.Abstraction.Ordering.Settings;
+﻿using Microsoft.eShopOnDapr.Services.API.Abstraction.Database;
+
+namespace Microsoft.eShopOnDapr.Services.API.Abstraction.Ordering.Settings;
 
 public sealed class ConnectionString : DatabaseBasicSetting
 {

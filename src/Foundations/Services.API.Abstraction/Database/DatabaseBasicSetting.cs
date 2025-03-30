@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnDapr.Services.API.Abstraction;
+﻿namespace Microsoft.eShopOnDapr.Services.API.Abstraction.Database;
 
 public class DatabaseBasicSetting
 {
