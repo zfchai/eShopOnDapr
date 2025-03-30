@@ -89,6 +89,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Foundations", "Foundations"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.API.Abstraction", "src\Foundations\Services.API.Abstraction\Services.API.Abstraction.csproj", "{EAADC0AA-B0E7-4FAB-BD38-93AA5423A8E2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eSharpOnDapr.AppHost", "src\eSharpOnDapr.AppHost\eSharpOnDapr.AppHost.csproj", "{7FC2140C-0020-42C4-9F84-45D2DEC24EDD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -147,6 +149,10 @@ Global
 		{EAADC0AA-B0E7-4FAB-BD38-93AA5423A8E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAADC0AA-B0E7-4FAB-BD38-93AA5423A8E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAADC0AA-B0E7-4FAB-BD38-93AA5423A8E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FC2140C-0020-42C4-9F84-45D2DEC24EDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FC2140C-0020-42C4-9F84-45D2DEC24EDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FC2140C-0020-42C4-9F84-45D2DEC24EDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FC2140C-0020-42C4-9F84-45D2DEC24EDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -180,6 +186,7 @@ Global
 		{1489AC81-8724-4077-9241-D0384BA0CB6C} = {EF69A3A6-A184-4C23-B9FB-034DAD2913C6}
 		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {CBF27136-5472-4217-AA88-C258F865E2D2}
 		{EAADC0AA-B0E7-4FAB-BD38-93AA5423A8E2} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{7FC2140C-0020-42C4-9F84-45D2DEC24EDD} = {CBF27136-5472-4217-AA88-C258F865E2D2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FBED0B95-87F8-439B-BC1E-382C8ABD4F2E}
