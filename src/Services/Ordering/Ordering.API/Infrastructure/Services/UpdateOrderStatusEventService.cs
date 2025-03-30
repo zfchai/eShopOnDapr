@@ -35,7 +35,13 @@ public class UpdateOrderStatusEventService(
         // Send a confirmation e-mail if enabled.
         if (ordering.SendConfirmationEmail)
         {
-            await emailService.SendOrderConfirmationAsync(readModelOrder);
+            var orderConfirmationReq = new OrderConfirmationReq 
+            {
+               Id = readModelOrder.Id,
+               OrderNumber = readModelOrder.OrderNumber,
+               BuyerEmail = readModelOrder.BuyerEmail
+            };
+            await emailService.SendOrderConfirmationAsync(orderConfirmationReq);
         }
     }
 

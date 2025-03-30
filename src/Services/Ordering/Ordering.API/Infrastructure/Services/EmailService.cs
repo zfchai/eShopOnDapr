@@ -1,6 +1,4 @@
-﻿using Microsoft.eShopOnDapr.Services.API.Abstraction.Ordering.ViewModel.Request;
-
-namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Services;
+﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Services;
 
 public class EmailService(ILogger<EmailService> logger, DaprClient daprClient) : IEmailService
 {
