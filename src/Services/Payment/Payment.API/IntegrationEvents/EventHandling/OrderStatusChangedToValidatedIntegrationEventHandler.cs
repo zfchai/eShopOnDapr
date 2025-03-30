@@ -2,11 +2,11 @@
 
 public class OrderStatusChangedToValidatedIntegrationEventHandler(
     ILogger<OrderStatusChangedToValidatedIntegrationEventHandler> logger,
-    IOptions<PaymentSettings> settings,
+    IOptionsSnapshot<PaymentSetting> setting,
     IEventBus eventBus
     ) : IIntegrationEventHandler<OrderStatusChangedToValidatedIntegrationEvent>
 {
-    private readonly PaymentSettings _settings = settings.Value;
+    private readonly PaymentSetting _setting = setting.Value;
 
     public async Task HandleAsync(OrderStatusChangedToValidatedIntegrationEvent @event)
     {
@@ -20,8 +20,8 @@ public class OrderStatusChangedToValidatedIntegrationEventHandler(
 
         await Task.Delay(3000); // Checking with the bank 😉
 
-        if (_settings.PaymentSucceeded &&
-            (!_settings.MaxOrderTotal.HasValue || @event.Total < _settings.MaxOrderTotal ))
+        if (_setting.PaymentSucceeded &&
+            (!_setting.MaxOrderTotal.HasValue || @event.Total < _setting.MaxOrderTotal ))
         {
             orderPaymentIntegrationEvent = new OrderPaymentSucceededIntegrationEvent(@event.OrderId);
         }

@@ -5,6 +5,8 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.eShopOnDapr.BuildingBlocks.EventBus;
 global using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Abstractions;
 global using Microsoft.eShopOnDapr.BuildingBlocks.EventBus.Events;
+global using Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks.Extensions;
+global using Microsoft.eShopOnDapr.Services.API.Abstraction.Payment.Settings;
 global using Microsoft.eShopOnDapr.Services.Payment.API.Extensions;
 global using Microsoft.eShopOnDapr.Services.Payment.API.IntegrationEvents.EventHandling;
 global using Microsoft.eShopOnDapr.Services.Payment.API.IntegrationEvents.Events;

@@ -1,6 +1,6 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Payment.API;
+﻿namespace Microsoft.eShopOnDapr.Services.API.Abstraction.Payment.Settings;
 
-public class PaymentSettings
+public class PaymentSetting
 {
     public bool PaymentSucceeded { get; set; } = true;
 
