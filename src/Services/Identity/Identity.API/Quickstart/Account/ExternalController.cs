@@ -1,4 +1,4 @@
-namespace IdentityServerHost.Quickstart.UI;
+namespace Microsoft.eShopOnDapr.Services.Identity.API.Quickstart.Account;
 
 [SecurityHeaders]
 [AllowAnonymous]

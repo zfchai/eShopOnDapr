@@ -1,4 +1,7 @@
-namespace IdentityServerHost.Quickstart.UI;
+
+using Microsoft.eShopOnDapr.Services.Identity.API.Quickstart.Account;
+
+namespace Microsoft.eShopOnDapr.Services.Identity.API.Quickstart;
 
 public static class Extensions
 {

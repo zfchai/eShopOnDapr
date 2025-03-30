@@ -1,5 +1,5 @@
 ﻿using Microsoft.eShopOnDapr.Services.Identity.API.Extensions;
-using Microsoft.eShopOnDapr.Services.Identity.API.Infrastructure.Database;
+using Microsoft.eShopOnDapr.Services.Identity.API.Infrastructure.Data;
 
 var appName = "Identity API";
 var builder = WebApplication.CreateBuilder();

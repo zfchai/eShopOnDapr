@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Identity.API.Infrastructure.Database;
+﻿namespace Microsoft.eShopOnDapr.Services.Identity.API.Infrastructure.Data;
 
 internal class SeedData
 {
