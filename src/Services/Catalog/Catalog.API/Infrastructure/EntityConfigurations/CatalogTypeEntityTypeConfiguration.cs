@@ -1,4 +1,6 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.EntityConfigurations;
+﻿using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Entities;
+
+namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.EntityConfigurations;
 
 public sealed class CatalogTypeEntityTypeConfiguration(string tablePrefix) : IEntityTypeConfiguration<CatalogType>
 {
@@ -17,10 +19,10 @@ public sealed class CatalogTypeEntityTypeConfiguration(string tablePrefix) : IEn
             .HasMaxLength(100);
 
         builder.HasData(
-            new CatalogType(1, "Cap"),
-            new CatalogType(2, "Mug"),
-            new CatalogType(3, "Pin"),
-            new CatalogType(4, "Sticker"),
-            new CatalogType(5, "T-Shirt"));
+            new CatalogType("0195e6bf-aea8-7448-af5e-fc81fa53b243", "Cap"),
+            new CatalogType("0195e6bf-aea8-7448-af5f-0231107417bb", "Mug"),
+            new CatalogType("0195e6bf-aea8-7448-af5f-073c7bef56d6", "Pin"),
+            new CatalogType("0195e6bf-aea8-7448-af5f-08d72ff6a584", "Sticker"),
+            new CatalogType("0195e6bf-aea8-7448-af5f-0fcdce95ad27", "T-Shirt"));
     }
 }

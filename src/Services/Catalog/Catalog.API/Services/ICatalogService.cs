@@ -1,16 +1,26 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.Services;
+﻿using Microsoft.eShopOnDapr.Services.API.Abstraction.Paginated;
+using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Entities;
+using Microsoft.eShopOnDapr.Services.Catalog.API.ViewModel.Response;
+
+namespace Microsoft.eShopOnDapr.Services.Catalog.API.Services;
 
 public interface ICatalogService
 {
-    Task<List<CatalogBrand>> GetCatalogBrandsAsync();
-    Task<List<CatalogType>> GetCatalogTypesAsync();
-    Task<List<ItemViewModel>> GetCatalogItemsAsync(string ids);
-    Task<PaginatedItemsViewModel> GetPaginatedCatalogItemsAsync(
-        int typeId = -1,
-        int brandId = -1,
-        int pageSize = 10,
-        int pageIndex = 0);
+    #region CatalogBrand
+    IAsyncEnumerable<CatalogBrandResp> GetCatalogBrandsAsync();
+    #endregion
 
+    #region CatalogType
+    IAsyncEnumerable<CatalogTypeResp> GetCatalogTypesAsync();
+    #endregion
 
+    #region CatalogItem
+    IAsyncEnumerable<CatalogItemResp> GetCatalogItemsAsync();
+    IAsyncEnumerable<CatalogItemResp?> GetCatalogItemsAsync(string ids);
+    Task<PaginatedItems<CatalogItemResp>?> GetPaginatedCatalogItemsAsync(
+        PaginatedFilter filter,
+        string typeId,
+        string brandId); 
+    #endregion
 
 }

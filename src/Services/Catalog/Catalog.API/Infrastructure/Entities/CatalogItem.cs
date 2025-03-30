@@ -1,15 +1,15 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.Model;
+﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Entities;
 
 public class CatalogItem(
-    int id,
+    string id,
     string name,
     decimal price,
     string pictureFileName,
-    int catalogTypeId,
-    int catalogBrandId,
+    string catalogTypeId,
+    string catalogBrandId,
     int availableStock)
 {
-    public int Id { get; private set; } = id;
+    public string Id { get; private set; } = id;
 
     public string Name { get; private set; } = name;
 
@@ -17,11 +17,11 @@ public class CatalogItem(
 
     public string PictureFileName { get; private set; } = pictureFileName;
 
-    public int CatalogTypeId { get; private set; } = catalogTypeId;
+    public string CatalogTypeId { get; private set; } = catalogTypeId;
 
     public CatalogType CatalogType { get; private set; } = null!;
 
-    public int CatalogBrandId { get; private set; } = catalogBrandId;
+    public string CatalogBrandId { get; private set; } = catalogBrandId;
 
     public CatalogBrand CatalogBrand { get; private set; } = null!;
 

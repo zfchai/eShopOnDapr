@@ -1,4 +1,6 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.EntityConfigurations;
+﻿using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Entities;
+
+namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.EntityConfigurations;
 
 public sealed class CatalogBrandEntityTypeConfiguration(string tablePrefix) : IEntityTypeConfiguration<CatalogBrand>
 {
@@ -17,8 +19,8 @@ public sealed class CatalogBrandEntityTypeConfiguration(string tablePrefix) : IE
             .HasMaxLength(100);
 
         builder.HasData(
-            new CatalogBrand(1, ".NET"),
-            new CatalogBrand(2, "Dapr"),
-            new CatalogBrand(3, "Other"));
+            new CatalogBrand("0195e6c1-3413-736c-aeee-f48a48b5289a", ".NET"),
+            new CatalogBrand("0195e6c1-3413-736c-aeee-f8032c3a77ba", "Dapr"),
+            new CatalogBrand("0195e6c1-3413-736c-aeee-fed5ac57e839", "Other"));
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Entities;
 
 namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure;
 

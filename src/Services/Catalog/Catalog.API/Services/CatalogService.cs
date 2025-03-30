@@ -1,69 +1,73 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.Services;
+﻿using Microsoft.eShopOnDapr.Services.API.Abstraction.Paginated;
+using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Entities;
+using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Mappers;
+using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Repository;
+using Microsoft.eShopOnDapr.Services.Catalog.API.ViewModel.Response;
 
-public class CatalogService : ICatalogService
+namespace Microsoft.eShopOnDapr.Services.Catalog.API.Services;
+
+public class CatalogService(ICatalogRepository repository) : ICatalogService
 {
-    private readonly CatalogDbContext _context;
-   
-    public CatalogService(CatalogDbContext context)
+    #region CatalogBrand
+    public async IAsyncEnumerable<CatalogBrandResp> GetCatalogBrandsAsync()
     {
-        _context = context;
-        _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+        var items = repository.GetCatalogBrandsAsync();
+        await foreach (var item in items)
+        {
+            yield return item.To();
+        }
+    }
+    #endregion
+
+    #region CatalogType
+    public async IAsyncEnumerable<CatalogTypeResp> GetCatalogTypesAsync()
+    {
+        var items = repository.GetCatalogTypesAsync();
+        await foreach (var item in items)
+        {
+            yield return item.To();
+        }
+    } 
+    #endregion
+
+    public async IAsyncEnumerable<CatalogItemResp> GetCatalogItemsAsync()
+    {
+        var items = repository.GetCatalogItemsAsync();
+        await foreach (var item in items)
+        {
+            yield return item.To();
+        }
     }
 
-    public Task<List<CatalogBrand>> GetCatalogBrandsAsync() =>
-        _context.CatalogBrands.ToListAsync();
-
-    public Task<List<CatalogType>> GetCatalogTypesAsync() =>
-        _context.CatalogTypes.ToListAsync();
-
-    public async Task<List<ItemViewModel>> GetCatalogItemsAsync(string ids) 
+    public async IAsyncEnumerable<CatalogItemResp?> GetCatalogItemsAsync(string ids) 
     {
-        List<ItemViewModel> items = [];
-        var numIds = ids.Split(',').Select(id => (Ok: int.TryParse(id, out int x), Value: x));
-        if (numIds.All(nid => nid.Ok))
+        var numIds = ids.Split(',');
+        var items = repository.GetCatalogItemsAsync(numIds);
+        await foreach (var item in items)
         {
-            var idsToSelect = numIds.Select(id => id.Value);
-            items = await _context.CatalogItems
-                .Where(ci => idsToSelect.Contains(ci.Id))
-                .Select(item => new ItemViewModel(
-                   item.Id,
-                   item.Name,
-                   item.Price,
-                   item.PictureFileName))
-                .ToListAsync();
+            yield return item?.To();
+        }
+    }
+
+    public async Task<PaginatedItems<CatalogItemResp>?> GetPaginatedCatalogItemsAsync(
+        PaginatedFilter filter,
+        string typeId,
+        string brandId)
+    {
+        List<CatalogItemResp> list = [];
+        var paginatedItems = await repository.GetPaginatedCatalogItemsAsync(filter, typeId, brandId);
+        long count = paginatedItems?.Count ?? 0;
+        var items = paginatedItems?.Items;
+
+        if (items != null)
+        {
+            foreach (var item in items)
+            {
+                list.Add(item.To());
+            }
         }
 
-        return items;
-    }
-
-    public async Task<PaginatedItemsViewModel> GetPaginatedCatalogItemsAsync(
-        int typeId = -1,
-        int brandId = -1,
-        int pageSize = 10,
-        int pageIndex = 0)
-    {
-        var query = _context.CatalogItems.AsQueryable();
-
-        if (typeId > -1)
-            query = query.Where(ci => ci.CatalogTypeId == typeId);
-
-        if (brandId > -1)
-            query = query.Where(ci => ci.CatalogBrandId == brandId);
-
-        var totalItems = await query.LongCountAsync();
-
-        var itemsOnPage = await query
-            .OrderBy(item => item.Name)
-            .Skip(pageSize * pageIndex)
-            .Take(pageSize)
-            .Select(item => new ItemViewModel(
-               item.Id,
-               item.Name,
-               item.Price,
-               item.PictureFileName))
-            .ToListAsync();
-
-        return new PaginatedItemsViewModel(pageIndex, pageSize, totalItems, itemsOnPage ?? []);
+        return new PaginatedItems<CatalogItemResp>(filter, count, list);
     }
 
 
