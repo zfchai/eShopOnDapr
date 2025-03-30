@@ -1,6 +1,4 @@
-﻿using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Models;
-
-namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Entities;
+﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Entities;
 
 public class Order
 {
@@ -12,7 +10,7 @@ public class Order
     public Address Address { get; private set; }
     public string BuyerId { get; private set; }
     public string BuyerEmail { get; private set; }
-    public List<OrderItem> OrderItems { get; private set; }
+    public IEnumerable<OrderItem> OrderItems { get; private set; }
 
     public Order()
     {
@@ -22,7 +20,7 @@ public class Order
         Address = new Address();
         BuyerId = string.Empty;
         BuyerEmail = string.Empty;
-        OrderItems = new();
+        OrderItems = [];
     }
 
     public Order(Guid orderId, OrderState state)
@@ -39,8 +37,7 @@ public class Order
             state.Address.State,
             state.Address.Country);
         OrderItems = state.OrderItems
-            .Select(itemState => new OrderItem(itemState))
-            .ToList();
+            .Select(itemState => new OrderItem(itemState));
     }
 
     public decimal GetTotal() => OrderItems.Sum(o => o.Units * o.UnitPrice);

@@ -1,5 +1,4 @@
-﻿using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Entities;
-using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Models;
+﻿using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Mappers;
 
 namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Services;
 
@@ -30,16 +29,16 @@ public class OrdersService(
         return result;
     }
 
-    public async Task<(bool state, Order? order)> GetOrderAsync(int orderNumber)
+    public async Task<(bool state, OrderResp? order)> GetOrderAsync(int orderNumber)
     {
         var buyerId = _identityService.GetUserIdentity();
         var order = await _orderRepository.GetOrderByOrderNumberAsync(orderNumber);
         if (order?.BuyerId == buyerId)
         {
-            return (true, order);
+            return (true, order.To());
         }
 
-        return (false, order);
+        return (false, order?.To());
     }
 
     public async IAsyncEnumerable<OrderSummary?> GetOrdersAsync()

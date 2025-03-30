@@ -1,4 +1,4 @@
-﻿using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Entities;
+﻿using Microsoft.eShopOnDapr.Services.API.Abstraction.Ordering.ViewModel.Request;
 
 namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Services;
 
@@ -7,7 +7,7 @@ public class EmailService(ILogger<EmailService> logger, DaprClient daprClient) :
     private const string SendMailBinding = "sendmail";
     private const string CreateBindingOperation = "create";
 
-    public Task SendOrderConfirmationAsync(Order order)
+    public Task SendOrderConfirmationAsync(OrderConfirmationReq order)
     {
         logger.LogInformation("Sending order confirmation email for order {OrderId} to {BuyerEmail}.",
             order.Id, order.BuyerEmail);
@@ -26,7 +26,7 @@ public class EmailService(ILogger<EmailService> logger, DaprClient daprClient) :
             });
     }
 
-    private static string CreateEmailBody(Order order) =>
+    private static string CreateEmailBody(OrderConfirmationReq order) =>
         $@"
             <html>
             <body>

@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.ViewModel.Response;
+﻿namespace Microsoft.eShopOnDapr.Services.API.Abstraction.Ordering.ViewModel.Response;
 
 //TODO
 public record OrderSummaryResp(

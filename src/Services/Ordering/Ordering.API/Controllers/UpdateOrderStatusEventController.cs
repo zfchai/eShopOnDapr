@@ -1,5 +1,4 @@
-﻿
-namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers;
+﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
