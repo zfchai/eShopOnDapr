@@ -1,4 +1,7 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers;
+﻿using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Entities;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Models;
+
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers;
 
 [Route("api/v1/[controller]")]
 [Authorize]

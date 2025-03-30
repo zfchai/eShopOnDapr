@@ -1,4 +1,6 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.Model;
+﻿using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Models;
+
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Entities;
 
 public class Order
 {

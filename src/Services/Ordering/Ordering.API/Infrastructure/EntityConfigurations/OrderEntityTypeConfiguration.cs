@@ -1,10 +1,12 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.EntityConfigurations;
+﻿using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Entities;
+
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.EntityConfigurations;
     
-public class OrderEntityTypeConfiguration : IEntityTypeConfiguration<Order>
+public class OrderEntityTypeConfiguration(string tablePrefix) : IEntityTypeConfiguration<Order>
 {
     public void Configure(EntityTypeBuilder<Order> builder)
     {
-        builder.ToTable("Orders");
+        builder.ToTable($"{tablePrefix}_Orders");
 
         builder.HasKey(o => o.Id);
 

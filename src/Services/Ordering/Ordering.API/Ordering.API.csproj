@@ -43,6 +43,7 @@
 
   <ItemGroup>
     <Folder Include="Infrastructure\Migrations\" />
+    <Folder Include="ViewModel\Request\" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,7 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Services;
+﻿using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Entities;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Models;
+
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Services;
 
 public interface IOrdersService
 {

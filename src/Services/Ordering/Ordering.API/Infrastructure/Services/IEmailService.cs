@@ -1,4 +1,6 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Services;
+﻿using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Entities;
+
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Services;
 
 public interface IEmailService
 {

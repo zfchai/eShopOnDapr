@@ -25,7 +25,6 @@ global using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Filters;
 global using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Repositories;
 global using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Services;
 global using Microsoft.eShopOnDapr.Services.Ordering.API.IntegrationEvents;
-global using Microsoft.eShopOnDapr.Services.Ordering.API.Model;
 global using Microsoft.Extensions.Diagnostics.HealthChecks;
 global using Microsoft.Extensions.Options;
 global using Microsoft.OpenApi.Models;

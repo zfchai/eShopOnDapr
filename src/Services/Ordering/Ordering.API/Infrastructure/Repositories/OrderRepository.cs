@@ -1,4 +1,7 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Repositories;
+﻿using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Entities;
+using Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Models;
+
+namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Repositories;
 
 public class OrderRepository : IOrderRepository
 {

@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.Model;
+﻿namespace Microsoft.eShopOnDapr.Services.Ordering.API.Infrastructure.Models;
 
 public class Address(
     string street,
