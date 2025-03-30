@@ -2,7 +2,7 @@
 
 namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.EntityConfigurations;
 
-public sealed class CatalogBrandEntityTypeConfiguration(string tablePrefix) : IEntityTypeConfiguration<CatalogBrand>
+internal sealed class CatalogBrandEntityTypeConfiguration(string tablePrefix) : IEntityTypeConfiguration<CatalogBrand>
 {
     public void Configure(EntityTypeBuilder<CatalogBrand> builder)
     {

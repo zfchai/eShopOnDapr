@@ -1,6 +1,6 @@
 ﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Entities;
 
-public class CatalogItem(
+public sealed class CatalogItem(
     string id,
     string name,
     decimal price,

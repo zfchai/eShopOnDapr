@@ -1,4 +1,4 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Catalog.API.ViewModel.Response;
+﻿namespace Microsoft.eShopOnDapr.Services.API.Abstraction.Catalog.ViewModel.Response;
 
 public record CatalogItemResp(
     string Id,

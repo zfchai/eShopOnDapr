@@ -1,8 +1,5 @@
-﻿using Microsoft.eShopOnDapr.Services.API.Abstraction.Paginated;
-using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Entities;
-using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Mappers;
+﻿using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Mappers;
 using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Repository;
-using Microsoft.eShopOnDapr.Services.Catalog.API.ViewModel.Response;
 
 namespace Microsoft.eShopOnDapr.Services.Catalog.API.Services;
 

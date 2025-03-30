@@ -2,7 +2,7 @@
 
 namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Repository;
 
-public partial class CatalogRepository
+internal partial class CatalogRepository
 {
     #region CatalogType
     public async IAsyncEnumerable<CatalogType> GetCatalogTypesAsync()

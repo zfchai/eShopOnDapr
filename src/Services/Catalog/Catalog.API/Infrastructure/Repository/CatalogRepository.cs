@@ -2,7 +2,7 @@
 
 namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Repository;
 
-public partial class CatalogRepository : ICatalogRepository
+internal partial class CatalogRepository : ICatalogRepository
 {
     private readonly ILogger<CatalogRepository> _logger;
     private readonly IServiceProvider _sp;

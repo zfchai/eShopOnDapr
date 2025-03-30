@@ -2,7 +2,7 @@
 
 namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Mappers;
 
-public static class CatalogBrandMapper
+internal static class CatalogBrandMapper
 {
     public static CatalogBrand From(this CatalogBrandReq req)
     {
@@ -14,11 +14,7 @@ public static class CatalogBrandMapper
 
     public static CatalogBrandResp To(this CatalogBrand entity)
     {
-        return new CatalogBrandResp() 
-        {
-            Id = entity.Id,
-            Name = entity.Name
-        };
+        return new CatalogBrandResp(entity.Id, entity.Name);
     }
 
 

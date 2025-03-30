@@ -1,6 +1,6 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Basket.API.Model;
+﻿namespace Microsoft.eShopOnDapr.Services.API.Abstraction.Basket.ViewModel.Request;
 
-public record BasketCheckout(
+public record BasketCheckoutReq(
     string UserEmail,
     string City,
     string Street,
@@ -11,5 +11,3 @@ public record BasketCheckout(
     DateTime CardExpiration,
     string CardSecurityCode
 );
-
-

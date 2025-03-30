@@ -1,8 +1,7 @@
-﻿using Microsoft.eShopOnDapr.Services.API.Abstraction.Paginated;
-using Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Entities;
-using Microsoft.eShopOnDapr.Services.Catalog.API.ViewModel.Response;
+﻿using Microsoft.eShopOnDapr.Services.API.Abstraction.Catalog.ViewModel.Response;
+using Microsoft.eShopOnDapr.Services.API.Abstraction.Paginated;
 
-namespace Microsoft.eShopOnDapr.Services.Catalog.API.Services;
+namespace Microsoft.eShopOnDapr.Services.API.Abstraction.Catalog.Services;
 
 public interface ICatalogService
 {

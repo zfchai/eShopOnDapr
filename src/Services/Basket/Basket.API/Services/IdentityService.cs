@@ -1,5 +1,4 @@
-﻿
-namespace Microsoft.eShopOnDapr.Services.Basket.API.Services;
+﻿namespace Microsoft.eShopOnDapr.Services.Basket.API.Services;
 
 public class IdentityService(ILogger<IdentityService> logger, IServiceProvider sp) : IIdentityService
 {
@@ -12,21 +11,21 @@ public class IdentityService(ILogger<IdentityService> logger, IServiceProvider s
         return _context.HttpContext?.User.FindFirst("sub")?.Value ?? string.Empty;
     }
 
-    public async Task<CustomerBasket> GetBasketAsync() 
+    public async Task<CustomerBasketResp> GetBasketAsync() 
     {
         var userId = GetUserIdentity();
         var basket = await _repository.GetBasketAsync(userId);
-        return basket ?? new CustomerBasket(userId);
+        return basket ?? new CustomerBasketResp(userId);
     }
 
-    public async Task<CustomerBasket> UpdateBasketAsync(CustomerBasket value)
+    public async Task<CustomerBasketResp> UpdateBasketAsync(CustomerBasketReq value)
     {
         var userId = GetUserIdentity();
         value.BuyerId = userId;
         return await _repository.UpdateBasketAsync(value);
     }
 
-    public async Task<int> CheckoutAsync(BasketCheckout basketCheckout, string requestId) 
+    public async Task<int> CheckoutAsync(BasketCheckoutReq basketCheckout, string requestId) 
     {
         var userId = GetUserIdentity();
         var basket = await _repository.GetBasketAsync(userId);
@@ -63,7 +62,6 @@ public class IdentityService(ILogger<IdentityService> logger, IServiceProvider s
     public async Task DeleteBasketAsync()
     {
         var userId = GetUserIdentity();
-
         logger.LogInformation("Deleting basket for user {UserId}...", userId);
 
         await _repository.DeleteBasketAsync(userId);

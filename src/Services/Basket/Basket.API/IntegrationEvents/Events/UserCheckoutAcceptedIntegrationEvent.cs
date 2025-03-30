@@ -12,5 +12,5 @@ public record UserCheckoutAcceptedIntegrationEvent(
     DateTime CardExpiration,
     string CardSecurityNumber,
     Guid RequestId,
-    CustomerBasket Basket)
+    CustomerBasketResp Basket)
     : IntegrationEvent;

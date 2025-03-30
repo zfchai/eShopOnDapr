@@ -1,4 +1,6 @@
-﻿namespace Microsoft.eShopOnDapr.Services.Basket.API.Model;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Microsoft.eShopOnDapr.Services.API.Abstraction.Basket.ViewModel.Model;
 
 public class BasketItem : IValidatableObject
 {

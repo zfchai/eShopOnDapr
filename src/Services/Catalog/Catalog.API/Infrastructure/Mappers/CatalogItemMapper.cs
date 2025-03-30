@@ -2,7 +2,7 @@
 
 namespace Microsoft.eShopOnDapr.Services.Catalog.API.Infrastructure.Mappers;
 
-public static class CatalogItemMapper
+internal static class CatalogItemMapper
 {
    
     public static CatalogItemResp To(this CatalogItem entity)

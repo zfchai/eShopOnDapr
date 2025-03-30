@@ -2,7 +2,7 @@
 
 public interface IBasketRepository
 {
-    Task<CustomerBasket> GetBasketAsync(string customerId);
-    Task<CustomerBasket> UpdateBasketAsync(CustomerBasket basket);
+    Task<CustomerBasketResp> GetBasketAsync(string customerId);
+    Task<CustomerBasketResp> UpdateBasketAsync(CustomerBasketReq basket);
     Task DeleteBasketAsync(string id);
 }

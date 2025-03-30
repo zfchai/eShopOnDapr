@@ -7,13 +7,16 @@ public class DaprBasketRepository(ILogger<DaprBasketRepository> logger, DaprClie
     public Task DeleteBasketAsync(string id) =>
         daprClient.DeleteStateAsync(StateStoreName, id);
 
-    public Task<CustomerBasket> GetBasketAsync(string customerId) =>
-        daprClient.GetStateAsync<CustomerBasket>(StateStoreName, customerId);
+    public Task<CustomerBasketResp> GetBasketAsync(string customerId) =>
+        daprClient.GetStateAsync<CustomerBasketResp>(StateStoreName, customerId);
 
-    public async Task<CustomerBasket> UpdateBasketAsync(CustomerBasket basket)
+    public async Task<CustomerBasketResp> UpdateBasketAsync(CustomerBasketReq basket)
     {
-        var state = await daprClient.GetStateEntryAsync<CustomerBasket>(StateStoreName, basket.BuyerId);
-        state.Value = basket;
+        var state = await daprClient.GetStateEntryAsync<CustomerBasketResp>(StateStoreName, basket.BuyerId);
+        state.Value = new CustomerBasketResp(basket.BuyerId) 
+        { 
+            Items = basket.Items 
+        };
 
         await state.SaveAsync();
 

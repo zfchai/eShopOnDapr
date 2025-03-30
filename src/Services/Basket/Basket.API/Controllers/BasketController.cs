@@ -6,16 +6,16 @@
 public class BasketController(ILogger<BasketController> logger, IIdentityService identityService) : ControllerBase
 {
     [HttpGet]
-    [ProducesResponseType(typeof(CustomerBasket), StatusCodes.Status200OK)]
-    public async Task<ActionResult<CustomerBasket>> GetBasketAsync()
+    [ProducesResponseType(typeof(CustomerBasketResp), StatusCodes.Status200OK)]
+    public async Task<ActionResult<CustomerBasketResp>> GetBasketAsync()
     {
         var basket = await identityService.GetBasketAsync();
         return Ok(basket);
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(CustomerBasket), StatusCodes.Status200OK)]
-    public async Task<ActionResult<CustomerBasket>> UpdateBasketAsync([FromBody] CustomerBasket value)
+    [ProducesResponseType(typeof(CustomerBasketResp), StatusCodes.Status200OK)]
+    public async Task<ActionResult<CustomerBasketResp>> UpdateBasketAsync([FromBody] CustomerBasketReq value)
     {
         var basket = await identityService.UpdateBasketAsync(value);
         return Ok(basket);
@@ -25,7 +25,7 @@ public class BasketController(ILogger<BasketController> logger, IIdentityService
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> CheckoutAsync(
-        [FromBody] BasketCheckout basketCheckout,
+        [FromBody] BasketCheckoutReq basketCheckout,
         [FromHeader(Name = "X-Request-Id")] string requestId)
     {
         int statusCode = await identityService.CheckoutAsync(basketCheckout, requestId);
@@ -40,7 +40,7 @@ public class BasketController(ILogger<BasketController> logger, IIdentityService
 
     // DELETE api/values/5
     [HttpDelete]
-    [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task DeleteBasketAsync()
     {
         await identityService.DeleteBasketAsync();
