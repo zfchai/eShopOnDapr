@@ -22,7 +22,7 @@
         "rabbitmq": "StartWithoutDebugging",
         "redis": "StartWithoutDebugging",
         "seq": "StartWithoutDebugging",
-        "sqldata": "StartWithoutDebugging",
+        "pgdata": "StartWithoutDebugging",
         "webshoppingagg": "StartDebugging",
         "webshoppingagg-dapr": "StartWithoutDebugging",
         "webshoppingapigw": "StartWithoutDebugging",
