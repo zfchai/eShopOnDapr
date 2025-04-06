@@ -47,9 +47,9 @@
     private async Task<string?> GetAccessTokenAsync()
     {
         var accessTokenResult = await _accessTokenProvider.RequestAccessToken();
-        if (accessTokenResult.TryGetToken(out AccessToken accessToken))
+        if (accessTokenResult.TryGetToken(out AccessToken? accessToken))
         {
-            return accessToken.Value;
+            return accessToken?.Value;
         }
 
         _navigationManager.NavigateTo("authentication/login");

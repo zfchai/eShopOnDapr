@@ -18,6 +18,7 @@ public class BasketController(ILogger<BasketController> logger, IServiceProvider
 
         if (statusCode == StatusCodes.Status400BadRequest)
         {
+            logger.LogError($"StatusCode={statusCode}, error:{msg}");
             return BadRequest(msg);
         }
 

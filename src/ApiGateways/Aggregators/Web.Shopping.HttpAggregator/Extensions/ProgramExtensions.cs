@@ -13,13 +13,9 @@ public static class ProgramExtensions
         var appRoot = builder.Environment.ContentRootPath;
         var envName = builder.Environment.EnvironmentName;
 
-        // Add default configuration file
-        builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                             .AddJsonFile($"appsettings.{envName}.json", optional: true, reloadOnChange: true);
-
-        // Build the complete path of AppData/Config/appsetings.json
-        var customDefaultConfigPath = Path.Combine(appRoot, "AppData", "Config", "appsettings.json");
-        var customEnvConfigPath = Path.Combine(appRoot, "AppData", "Config", $"appsettings.{envName}.json");
+        // Build the complete path of AppData/Settings/appsetings.json
+        var customDefaultConfigPath = Path.Combine(appRoot, "AppData", "Settings", "appsettings.json");
+        var customEnvConfigPath = Path.Combine(appRoot, "AppData", "Settings", $"appsettings.{envName}.json");
 
         // Add custom configuration file
         builder.Configuration.AddJsonFile(customDefaultConfigPath, optional: true, reloadOnChange: true)

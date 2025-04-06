@@ -1,20 +1,21 @@
+using Aspire.Hosting.Dapr;
 using Aspire.Hosting.MailDev;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
 // Add a parameter
-var pgUser = builder.AddParameter("pg_user");
-var pgPassword = builder.AddParameter("pg_password", secret: true);
+var pgUser = builder.AddParameter("PgUser");
+var pgPassword = builder.AddParameter("PgPassword", secret: true);
 
-var maildevUser = builder.AddParameter("maildev_user");
-var maildevPassword = builder.AddParameter("maildev_password", secret: true);
+var maildevUser = builder.AddParameter("MaildevUser");
+var maildevPassword = builder.AddParameter("MaildevPassword", secret: true);
 
 // Add a dapr statestore and pubsub
-var stateStore = builder.AddDaprStateStore("statestore");
-var pubSub = builder.AddDaprPubSub("pubsub");
-var secretStore = builder.AddDaprComponent("secretstore", "secret");
-
+var stateStore = builder.AddDaprStateStore("eshopondapr-statestore");
+var pubSub = builder.AddDaprPubSub("eshopondapr-pubsub");
+//var secretStore = builder.AddDaprComponent("eshopondapr-secretstore", "secretstores.local.file");
 
 var maildev = builder
       .AddMailDev("maildev", options => options
@@ -50,7 +51,7 @@ var catalogDb = postgres.AddDatabase("CatalogDb");
 var identityDb = postgres.AddDatabase("IdentityDb");
 var orderingDb = postgres.AddDatabase("OrderingDb");
 
-var identityService = builder.AddProject<Projects.Identity_API>("identity.api")
+var identityService = builder.AddProject<Projects.Identity_API>("identity-api")
       .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
       .WithEnvironment("ASPNETCORE_URLS", "http://0.0.0.0:80")
       .WithEnvironment("IdentityUrl", "http://identity-api")
@@ -59,18 +60,18 @@ var identityService = builder.AddProject<Projects.Identity_API>("identity.api")
       .WithDaprSidecar()
       .WithReference(identityDb);
 
-var shoppingService = builder.AddProject<Projects.Web_Shopping_HttpAggregator>("web.shopping.httpaggregator")
+var shoppingService = builder.AddProject<Projects.Web_Shopping_HttpAggregator>("web-shopping-httpaggregator")
       .WithDaprSidecar()
       .WithReference(identityDb);
 
-var blazorClientHost = builder.AddProject<Projects.BlazorClient_Host>("blazor.client.host")
+var blazorClientHost = builder.AddProject<Projects.BlazorClient_Host>("blazor-client-host")
       .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
       .WithEnvironment("ASPNETCORE_URLS", "http://0.0.0.0:80")
       .WithEnvironment("ApiGatewayUrlExternal", "http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5202")
       .WithEnvironment("IdentityUrlExternal", "http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105")
       .WithEnvironment("SeqServerUrl", "http://seq");
 
-var basketService = builder.AddProject<Projects.Basket_API>("basket.api")
+var basketService = builder.AddProject<Projects.Basket_API>("basket-api")
       .WithDaprSidecar()
       .WithReference(redis)
       .WithReference(identityService)
@@ -78,24 +79,29 @@ var basketService = builder.AddProject<Projects.Basket_API>("basket.api")
       .WithReference(rabbitmq)
       .WithReference(seq);
 
-
-var catalogService = builder.AddProject<Projects.Catalog_API>("catalog.api")
+var catalogService = builder.AddProject<Projects.Catalog_API>("catalog-api")
       .WithDaprSidecar()
       .WithReference(maildev)
       .WithReference(catalogDb);
 
-
-var orderingService = builder.AddProject<Projects.Ordering_API>("ordering.api")
+var orderingService = builder.AddProject<Projects.Ordering_API>("ordering-api")
       .WithDaprSidecar()
       .WithReference(orderingDb);
 
-var paymentService = builder.AddProject<Projects.Payment_API>("payment.api")
+var paymentService = builder.AddProject<Projects.Payment_API>("payment-api")
       .WithDaprSidecar()
       .WithReference(pubSub)
       .WithReference(rabbitmq)
       .WithReference(seq);
 
-
+// Workaround for https://github.com/dotnet/aspire/issues/2219
+if (builder.Configuration.GetValue<string>("DAPR_CLI_PATH") is { } daprCliPath)
+{
+    builder.Services.Configure<DaprOptions>(options =>
+    {
+        options.DaprPath = daprCliPath;
+    });
+}
 
 var app = builder.Build();
 
