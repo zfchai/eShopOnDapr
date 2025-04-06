@@ -2,6 +2,7 @@
 var appName = "Catalog API";
 var builder = WebApplication.CreateBuilder(args);
 
+builder.ApplyAppsettings(args);
 builder.AddCustomConfiguration();
 builder.AddCustomOptions();
 builder.AddCustomSerilog();

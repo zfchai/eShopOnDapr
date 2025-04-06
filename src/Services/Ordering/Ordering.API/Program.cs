@@ -2,6 +2,7 @@
 var appName = "Ordering API";
 var builder = WebApplication.CreateBuilder(args);
 
+builder.ApplyAppsettings(args);
 builder.AddCustomConfiguration();
 builder.AddCustomSerilog();
 builder.AddCustomSwagger();

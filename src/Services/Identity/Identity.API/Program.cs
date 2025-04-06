@@ -4,6 +4,7 @@ using Microsoft.eShopOnDapr.Services.Identity.API.Infrastructure.Data;
 var appName = "Identity API";
 var builder = WebApplication.CreateBuilder();
 
+builder.ApplyAppsettings(args);
 builder.AddCustomConfiguration();
 builder.AddCustomOptions();
 builder.AddCustomSerilog();

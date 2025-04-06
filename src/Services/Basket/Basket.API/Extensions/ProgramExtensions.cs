@@ -7,6 +7,25 @@ public static class ProgramExtensions
 {
     private const string AppName = "Basket API";
 
+    public static void ApplyAppsettings(this WebApplicationBuilder builder, string[] args)
+    {
+        // Retrieve the environmental information of the current application
+        var appRoot = builder.Environment.ContentRootPath;
+        var envName = builder.Environment.EnvironmentName;
+
+        // Build the complete path of AppData/Settings/appsetings.json
+        var customDefaultConfigPath = Path.Combine(appRoot, "AppData", "Settings", "appsettings.json");
+        var customEnvConfigPath = Path.Combine(appRoot, "AppData", "Settings", $"appsettings.{envName}.json");
+
+        // Add custom configuration file
+        builder.Configuration.AddJsonFile(customDefaultConfigPath, optional: true, reloadOnChange: true)
+                             .AddJsonFile(customEnvConfigPath, optional: true, reloadOnChange: true);
+
+        // Add environment variables and command-line parameters
+        builder.Configuration.AddEnvironmentVariables();
+        builder.Configuration.AddCommandLine(args);
+    }
+
     public static void AddCustomSerilog(this WebApplicationBuilder builder)
     {
         var seqServerUrl = builder.Configuration["SeqServerUrl"];

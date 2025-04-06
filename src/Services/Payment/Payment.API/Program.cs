@@ -2,6 +2,7 @@
 var appName = "Payment API";
 var builder = WebApplication.CreateBuilder(args);
 
+builder.ApplyAppsettings(args);
 builder.AddCustomSerilog();
 builder.AddCustomSwagger();
 builder.AddCustomHealthChecks();
