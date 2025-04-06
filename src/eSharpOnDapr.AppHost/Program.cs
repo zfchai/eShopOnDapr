@@ -13,8 +13,8 @@ var maildevUser = builder.AddParameter("MaildevUser");
 var maildevPassword = builder.AddParameter("MaildevPassword", secret: true);
 
 // Add a dapr statestore and pubsub
-var stateStore = builder.AddDaprStateStore("eshopondapr-statestore");
-var pubSub = builder.AddDaprPubSub("eshopondapr-pubsub");
+//var stateStore = builder.AddDaprStateStore("eshopondapr-statestore");
+//var pubSub = builder.AddDaprPubSub("eshopondapr-pubsub");
 //var secretStore = builder.AddDaprComponent("eshopondapr-secretstore", "secretstores.local.file");
 
 var maildev = builder
@@ -75,7 +75,7 @@ var basketService = builder.AddProject<Projects.Basket_API>("basket-api")
       .WithDaprSidecar()
       .WithReference(redis)
       .WithReference(identityService)
-      .WithReference(pubSub)
+      //.WithReference(pubSub)
       .WithReference(rabbitmq)
       .WithReference(seq);
 
@@ -90,7 +90,7 @@ var orderingService = builder.AddProject<Projects.Ordering_API>("ordering-api")
 
 var paymentService = builder.AddProject<Projects.Payment_API>("payment-api")
       .WithDaprSidecar()
-      .WithReference(pubSub)
+      //.WithReference(pubSub)
       .WithReference(rabbitmq)
       .WithReference(seq);
 
