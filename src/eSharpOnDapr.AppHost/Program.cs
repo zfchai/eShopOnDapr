@@ -45,7 +45,10 @@ var postgres = builder
       .AddPostgres("postgresql", pgUser, pgPassword, port: 15432)
       .WithImageTag("16.6-alpine3.20")
       .WithDataVolume("eshorp_postgres_data")
-      .WithPgAdmin(c => c.WithHostPort(5050));
+      .WithPgAdmin(
+         c => c.WithImage("dpage/pgadmin4:9.2")
+               .WithHostPort(5050)
+      );
 
 var catalogDb = postgres.AddDatabase("CatalogDb");
 var identityDb = postgres.AddDatabase("IdentityDb");
