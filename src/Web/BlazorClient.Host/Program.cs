@@ -1,12 +1,13 @@
 ﻿using Serilog;
 
 var appName = "Blazor UI Host";
-var configuration = GetConfiguration();
-
-Log.Logger = CreateSerilogLogger(configuration);
+var currentDirectory = Directory.GetCurrentDirectory();
+var configuration = GetConfiguration(currentDirectory);
 
 try
 {
+    Log.Logger = CreateSerilogLogger(configuration);
+
     Log.Information("Configuring web host ({ApplicationName})...", appName);
     var host = BuildWebHost();
 
@@ -25,10 +26,10 @@ finally
     Log.CloseAndFlush();
 }
 
-IConfiguration GetConfiguration()
+IConfiguration GetConfiguration(string basePath)
 {
     var builder = new ConfigurationBuilder()
-        .SetBasePath(Directory.GetCurrentDirectory())
+        .SetBasePath(basePath)
         .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
         .AddEnvironmentVariables();
 
@@ -40,7 +41,7 @@ IHost BuildWebHost() =>
         .ConfigureWebHostDefaults(webBuilder =>
         {
             webBuilder.UseStartup<Startup>();
-            webBuilder.UseContentRoot(Directory.GetCurrentDirectory());
+            webBuilder.UseContentRoot(currentDirectory);
         })
         .UseSerilog()
         .Build();
@@ -49,10 +50,19 @@ Serilog.ILogger CreateSerilogLogger(IConfiguration configuration)
 {
     var seqServerUrl = configuration["SeqServerUrl"];
 
+    if (string.IsNullOrWhiteSpace(seqServerUrl))
+    {
+        return new LoggerConfiguration()
+        .ReadFrom.Configuration(configuration)
+        .WriteTo.Console()
+        .Enrich.WithProperty("ApplicationName", appName)
+        .CreateLogger();
+    }
+
     return new LoggerConfiguration()
         .ReadFrom.Configuration(configuration)
         .WriteTo.Console()
-        .WriteTo.Seq(seqServerUrl!)
+        .WriteTo.Seq(seqServerUrl)
         .Enrich.WithProperty("ApplicationName", appName)
         .CreateLogger();
 }

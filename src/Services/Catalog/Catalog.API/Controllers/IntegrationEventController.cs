@@ -2,7 +2,7 @@
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class IntegrationEventController : ControllerBase
+public sealed class IntegrationEventController : ControllerBase
 {
     private const string DAPR_PUBSUB_NAME = "eshopondapr-pubsub";
 

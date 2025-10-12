@@ -8,10 +8,9 @@ namespace Microsoft.eShopOnDapr.Services.Identity.API.Quickstart.Grants;
 /// </summary>
 [SecurityHeaders]
 [Authorize]
-public class GrantsController(
+public sealed class GrantsController(
     ILogger<GrantsController> logger,
-    IServiceProvider sp
-    ) : Controller
+    IServiceProvider sp) : Controller
 {
     private readonly IIdentityServerInteractionService _interaction = sp.GetRequiredService<IIdentityServerInteractionService>();   
     private readonly IClientStore _clients = sp.GetRequiredService<IClientStore>();

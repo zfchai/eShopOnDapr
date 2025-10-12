@@ -8,10 +8,9 @@ namespace Microsoft.eShopOnDapr.Services.Identity.API.Quickstart.Consent;
 /// </summary>
 [SecurityHeaders]
 [Authorize]
-public class ConsentController(
+public sealed class ConsentController(
     ILogger<ConsentController> logger,
-    IServiceProvider sp
-    ) : Controller
+    IServiceProvider sp) : Controller
 {
     private readonly IIdentityServerInteractionService _interaction = sp.GetRequiredService<IIdentityServerInteractionService>();   
     private readonly IEventService _events = sp.GetRequiredService<IEventService>();

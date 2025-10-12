@@ -3,7 +3,7 @@
 [Route("api/v1/[controller]")]
 [Authorize]
 [ApiController]
-public class BasketController(ILogger<BasketController> logger, IServiceProvider sp) : ControllerBase
+public sealed class BasketController(ILogger<BasketController> logger, IServiceProvider sp) : ControllerBase
 {
     private readonly ICatalogService _catalog = sp.GetRequiredService<ICatalogService>();
 

@@ -5,10 +5,9 @@ namespace Microsoft.eShopOnDapr.Services.Identity.API.Quickstart.Home;
 
 [SecurityHeaders]
 [AllowAnonymous]
-public class HomeController(
+public sealed class HomeController(
     ILogger<HomeController> logger,
-    IServiceProvider sp
-    ) : Controller
+    IServiceProvider sp) : Controller
 {
     private readonly IIdentityServerInteractionService _interaction = sp.GetRequiredService<IIdentityServerInteractionService>();   
     private readonly IWebHostEnvironment _environment = sp.GetRequiredService<IWebHostEnvironment>();

@@ -31,8 +31,8 @@ public class Startup(IConfiguration configuration)
             app.UseExceptionHandler("/Error");
         }
 
-        var pathBase = Configuration["PATH_BASE"];
-        if (!string.IsNullOrEmpty(pathBase))
+        var pathBase = Configuration["PathBase"];
+        if (!string.IsNullOrWhiteSpace(pathBase))
         {
             app.UsePathBase(pathBase);
         }

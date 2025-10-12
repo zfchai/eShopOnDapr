@@ -7,7 +7,7 @@ public class OrderStatusChangedToAwaitingStockValidationIntegrationEventHandler(
 {
     public async Task HandleAsync(OrderStatusChangedToAwaitingStockValidationIntegrationEvent @event)
     {
-        var confirmedOrderStockItems = new List<ConfirmedOrderStockItem>();
+        List<ConfirmedOrderStockItem> confirmedOrderStockItems = [];
 
         foreach (var orderStockItem in @event.OrderStockItems)
         {

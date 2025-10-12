@@ -11,11 +11,10 @@ namespace Microsoft.eShopOnDapr.Services.Identity.API.Quickstart.Device;
 
 [Authorize]
 [SecurityHeaders]
-public class DeviceController(
+public sealed class DeviceController(
     ILogger<DeviceController> logger,
     IOptions<IdentityServerOptions> options,
-    IServiceProvider sp
-    ) : Controller
+    IServiceProvider sp) : Controller
 {
     private readonly IDeviceFlowInteractionService _interaction = sp.GetRequiredService<IDeviceFlowInteractionService>();   
     private readonly IEventService _events = sp.GetRequiredService<IEventService>();

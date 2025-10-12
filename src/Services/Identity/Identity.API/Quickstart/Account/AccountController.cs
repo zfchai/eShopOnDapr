@@ -5,12 +5,11 @@ namespace Microsoft.eShopOnDapr.Services.Identity.API.Quickstart.Account;
 
 [SecurityHeaders]
 [AllowAnonymous]
-public class AccountController(
+public sealed class AccountController(
     ILogger<AccountController> logger,
     IServiceProvider sp,
     UserManager<ApplicationUser> userManager,
-    SignInManager<ApplicationUser> signInManager
-    ) : Controller
+    SignInManager<ApplicationUser> signInManager) : Controller
 {
     private readonly IIdentityServerInteractionService _interaction = sp.GetRequiredService<IIdentityServerInteractionService>();
     private readonly IClientStore _clientStore = sp.GetRequiredService<IClientStore>();

@@ -2,10 +2,9 @@
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class OrderingProcessEventController(
+public sealed class OrderingProcessEventController(
     ILogger<OrderingProcessEventController> logger,
-    IOrderingProcessEventService orderingProcessEventService
-    ) : ControllerBase
+    IOrderingProcessEventService orderingProcessEventService) : ControllerBase
 {
     private const string DAPR_PUBSUB_NAME = "eshopondapr-pubsub";
 

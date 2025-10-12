@@ -5,10 +5,9 @@ namespace Microsoft.eShopOnDapr.Services.Ordering.API.Controllers;
 [Route("api/v1/[controller]")]
 [Authorize]
 [ApiController]
-public class OrdersController(
+public sealed class OrdersController(
     ILogger<OrdersController> logger,
-    IOrdersService ordersService
-    ) : ControllerBase
+    IOrdersService ordersService) : ControllerBase
 {
 
     [Route("{orderNumber:int}/cancel")]

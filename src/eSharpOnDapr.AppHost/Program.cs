@@ -13,9 +13,9 @@ var maildevUser = builder.AddParameter("MaildevUser");
 var maildevPassword = builder.AddParameter("MaildevPassword", secret: true);
 
 // Add a dapr statestore and pubsub
-//var stateStore = builder.AddDaprStateStore("eshopondapr-statestore");
-//var pubSub = builder.AddDaprPubSub("eshopondapr-pubsub");
-//var secretStore = builder.AddDaprComponent("eshopondapr-secretstore", "secretstores.local.file");
+var stateStore = builder.AddDaprStateStore("eshopondapr-statestore");
+var pubsub = builder.AddDaprPubSub("eshopondapr-pubsub");
+var secretStore = builder.AddDaprComponent("eshopondapr-secretstore", "secretstores.local.file");
 
 var maildev = builder
       .AddMailDev("maildev", options => options
@@ -77,14 +77,16 @@ var blazorClientHost = builder.AddProject<Projects.BlazorClient_Host>("blazor-cl
 var basketService = builder.AddProject<Projects.Basket_API>("basket-api")
       .WithDaprSidecar()
       .WithReference(redis)
+      .WithReference(stateStore)
       .WithReference(identityService)
-      //.WithReference(pubSub)
+      .WithReference(pubsub)
       .WithReference(rabbitmq)
       .WithReference(seq);
 
 var catalogService = builder.AddProject<Projects.Catalog_API>("catalog-api")
       .WithDaprSidecar()
       .WithReference(maildev)
+      .WithReference(secretStore)
       .WithReference(catalogDb);
 
 var orderingService = builder.AddProject<Projects.Ordering_API>("ordering-api")
@@ -93,7 +95,7 @@ var orderingService = builder.AddProject<Projects.Ordering_API>("ordering-api")
 
 var paymentService = builder.AddProject<Projects.Payment_API>("payment-api")
       .WithDaprSidecar()
-      //.WithReference(pubSub)
+      .WithReference(pubsub)
       .WithReference(rabbitmq)
       .WithReference(seq);
 

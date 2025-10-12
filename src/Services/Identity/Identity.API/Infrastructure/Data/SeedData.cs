@@ -7,14 +7,9 @@ internal class SeedData
         var retryPolicy = CreateRetryPolicy(configuration, logger);
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        await retryPolicy.ExecuteAsync(async () =>
-        {
-            await context.Database.MigrateAsync();
-
-            var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-
-            // create alice
-            await CreateUserAsync(userMgr, logger, "Pass123$", new ApplicationUser
+        List<ApplicationUser> users =
+        [
+            new ApplicationUser
             {
                 UserName = "alice",
                 Email = "AliceSmith@email.com",
@@ -33,10 +28,8 @@ internal class SeedData
                 State = "WA",
                 Street = "15703 NE 61st Ct",
                 SecurityNumber = "123"
-            });
-
-            // create bob
-            await CreateUserAsync(userMgr, logger, "Pass123$", new ApplicationUser
+            },
+            new ApplicationUser
             {
                 UserName = "bob",
                 Email = "BobSmith@email.com",
@@ -55,7 +48,20 @@ internal class SeedData
                 State = "WA",
                 Street = "15703 NE 61st Ct",
                 SecurityNumber = "456"
-            });
+            }
+        ];
+
+        await retryPolicy.ExecuteAsync(async () =>
+        {
+            await context.Database.MigrateAsync();
+
+            var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+            // 批量创建用户
+            foreach (var user in users)
+            {
+                await CreateUserAsync(userMgr, logger, "Pass123$", user);
+            }
         });
     }
 

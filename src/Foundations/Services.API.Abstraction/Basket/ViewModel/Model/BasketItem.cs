@@ -12,7 +12,7 @@ public class BasketItem : IValidatableObject
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        var results = new List<ValidationResult>();
+        List<ValidationResult> results = [];
 
         if (Quantity < 1)
         {

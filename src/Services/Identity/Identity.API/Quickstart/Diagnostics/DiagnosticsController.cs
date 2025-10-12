@@ -5,7 +5,7 @@ namespace Microsoft.eShopOnDapr.Services.Identity.API.Quickstart.Diagnostics;
 
 [SecurityHeaders]
 [Authorize]
-public class DiagnosticsController : Controller
+public sealed class DiagnosticsController : Controller
 {
     public async Task<IActionResult> Index()
     {
