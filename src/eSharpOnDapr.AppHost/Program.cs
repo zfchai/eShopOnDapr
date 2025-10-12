@@ -50,7 +50,7 @@ var garnet = builder
 // 手动添加 RedisInsight（用于管理 Garnet）
 var redisInsight = builder
     //.AddContainer("redisinsight", "redis/redisinsight", "latest")
-    .AddContainer("redisinsight", "docker.io/redislabs/redisinsight", "2.70") // https://docker.aityp.com/r/docker.io/redislabs/redisinsight                                                                        
+    .AddContainer("redisinsight", "redislabs/redisinsight", "2.70") // https://docker.aityp.com/r/docker.io/redislabs/redisinsight                                                                        
     .WithEndpoint(port: 8001, targetPort: 5540, scheme: "http", name: "http") // RedisInsight 默认容器端口是 5540
     .WithReference(garnet)
     .WithVolume("eshop_redisinsight_data", "/data")
