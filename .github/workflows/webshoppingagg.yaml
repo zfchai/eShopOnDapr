@@ -8,7 +8,7 @@ on:
 
     paths:
     - src/ApiGateways/Aggregators/Web.Shopping.HttpAggregator/**
-    - .github/workflows/webshoppingagg.yml
+    - .github/workflows/webshoppingagg.yaml
   
   pull_request:
     branches:
@@ -16,7 +16,7 @@ on:
 
     paths:
     - src/ApiGateways/Aggregators/Web.Shopping.HttpAggregator/**
-    - .github/workflows/webshoppingagg.yml
+    - .github/workflows/webshoppingagg.yaml
 env:
   SERVICE: webshoppingagg
   IMAGE: webshoppingagg

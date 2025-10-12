@@ -9,7 +9,7 @@ on:
     paths:
     - src/BuildingBlocks/**
     - src/Web/**
-    - .github/workflows/blazor-client.yml
+    - .github/workflows/blazor-client.yaml
   
   pull_request:
     branches:
@@ -18,7 +18,7 @@ on:
     paths:
     - src/BuildingBlocks/**
     - src/Web/**
-    - .github/workflows/blazor-client.yml
+    - .github/workflows/blazor-client.yaml
 env:
   SERVICE: blazor-client
   IMAGE: blazor.client

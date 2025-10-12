@@ -8,7 +8,7 @@ on:
 
     paths:
     - src/ApiGateways/Envoy/**
-    - .github/workflows/webshoppingapigw.yml
+    - .github/workflows/webshoppingapigw.yaml
   
   pull_request:
     branches:
@@ -16,7 +16,7 @@ on:
 
     paths:
     - src/ApiGateways/Envoy/**
-    - .github/workflows/webshoppingapigw.yml
+    - .github/workflows/webshoppingapigw.yaml
 env:
   SERVICE: webshoppingapigw
   IMAGE: webshoppingapigw

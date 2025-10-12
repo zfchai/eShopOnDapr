@@ -1,4 +1,4 @@
-name: payment-api
+name: catalog-api
 
 on:
   workflow_dispatch:
@@ -8,20 +8,22 @@ on:
 
     paths:
     - src/BuildingBlocks/**
-    - src/Services/Payment/**
-    - .github/workflows/payment-api.yml
+    - src/Services/Catalog/**
+    - .github/workflows/catalog-api.yaml
   
   pull_request:
     branches:
     - main
-
+    
     paths:
     - src/BuildingBlocks/**
-    - src/Services/Payment/**
-    - .github/workflows/payment-api.yml
+    - src/Services/Catalog/**
+    - .github/workflows/catalog-api.yaml
 env:
-  SERVICE: payment-api
-  IMAGE: payment.api
+  SERVICE: catalog-api
+  IMAGE: catalog.api
+  DOTNET_VERSION: 7.0.x
+  USE_DOTNET_PREVIEW: true
 
 jobs:
 
@@ -31,6 +33,18 @@ jobs:
     steps:
     - name: 'Checkout Github Action'
       uses: actions/checkout@master
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        include-prerelease: ${{ env.USE_DOTNET_PREVIEW }}
+
+    - name: Build and run unit tests
+      run: |
+        dotnet restore "src/Services/Catalog/Catalog.API/Catalog.API.csproj"
+        cd src/Services/Catalog/Catalog.API
+        dotnet build --no-restore
       
     - name: Compose build ${{ env.SERVICE }}
       run: sudo -E docker-compose build ${{ env.SERVICE }}
@@ -46,6 +60,18 @@ jobs:
     steps:
     - name: 'Checkout Github Action'
       uses: actions/checkout@master
+
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        include-prerelease: ${{ env.USE_DOTNET_PREVIEW }}
+
+    - name: Build and run unit tests
+      run: |
+        dotnet restore "src/Services/Catalog/Catalog.API/Catalog.API.csproj"
+        cd src/Services/Catalog/Catalog.API
+        dotnet build --no-restore
 
     - name: Enable experimental features for the Docker daemon and CLI
       run: |
