@@ -12,6 +12,8 @@ var pgPassword = builder.AddParameter("PgPassword", secret: true);
 var maildevUser = builder.AddParameter("MaildevUser");
 var maildevPassword = builder.AddParameter("MaildevPassword", secret: true);
 
+var garnetPassword = builder.AddParameter("GarnetPassword");
+
 // Add a dapr statestore and pubsub
 //var stateStore = builder.AddDaprStateStore("eshopondapr-statestore");
 //var pubsub = builder.AddDaprPubSub("eshopondapr-pubsub");
@@ -36,16 +38,30 @@ var rabbitmq = builder
       .WithImageTag("3-management-alpine")
       .WithDataVolume("eshorp_rabbitmq_data");
 
-var redis = builder
-      .AddRedis("redis", port: 5379)
-      .WithImageTag("7.4.0-alpine3.20")
-      .WithDataVolume("eshorp_redis_data");
+//var redis = builder
+//      .AddRedis("redis", port: 5379)
+//      .WithImageTag("7.4.0-alpine3.20")
+//      .WithDataVolume("eshorp_redis_data");
+
+var garnet = builder
+      .AddGarnet("cache", port: 6379, password: garnetPassword)
+      .WithDataVolume("eshorp_garnet_data");
+
+// 手动添加 RedisInsight（用于管理 Garnet）
+var redisInsight = builder
+    //.AddContainer("redisinsight", "redis/redisinsight", "latest")
+    .AddContainer("redisinsight", "docker.io/redislabs/redisinsight", "2.70") // https://docker.aityp.com/r/docker.io/redislabs/redisinsight                                                                        
+    .WithEndpoint(port: 8001, targetPort: 5540, scheme: "http", name: "http") // RedisInsight 默认容器端口是 5540
+    .WithReference(garnet)
+    .WithVolume("eshop_redisinsight_data", "/data")
+    .WithEnvironment("REDISINSIGHT_HOST", "0.0.0.0")
+    .WithEnvironment("REDISINSIGHT_PORT", "5540");
 
 var seq = builder
       .AddSeq(name:"seq", port: 5340)
       .WithImageTag("latest")
       .WithEnvironment("ACCEPT_EULA", "Y")
-      .WithDataVolume("eshorp_redis_data");
+      .WithDataVolume("eshorp_seq_data");
 
 builder.Services.AddHttpClient("ZipkinExporter", 
     configureClient: (client) => client.DefaultRequestHeaders.Add("X-MyCustomHeader", "value"));
@@ -85,7 +101,8 @@ var blazorClientHost = builder.AddProject<Projects.BlazorClient_Host>("blazor-cl
 
 var basketService = builder.AddProject<Projects.Basket_API>("basket-api")
       .WithDaprSidecar()
-      .WithReference(redis)
+      //.WithReference(redis) 
+      .WithReference(garnet) 
       //.WithReference(stateStore)
       .WithReference(identityService)
       //.WithReference(pubsub)
