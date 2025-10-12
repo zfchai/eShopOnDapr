@@ -171,6 +171,8 @@ services:
       - IdentityUrl=http://identity-api
       - IdentityUrlExternal=http://${ESHOP_EXTERNAL_DNS_NAME_OR_IP}:5105
       - SeqServerUrl=http://seq
+      - PaymentUrlHC=http://payment-api/hc
+      - OrderingUrlHC=http://ordering-api/hc
       - BasketUrlHC=http://basket-api/hc
       - CatalogUrlHC=http://catalog-api/hc
       - IdentityUrlHC=http://identity-api/hc
