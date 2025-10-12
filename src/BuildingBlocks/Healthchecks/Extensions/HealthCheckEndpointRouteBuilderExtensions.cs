@@ -1,6 +1,3 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-
 namespace Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks.Extensions;
 
 public static class HealthCheckEndpointRouteBuilderExtensions

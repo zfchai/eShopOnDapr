@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-
+﻿
 namespace Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks.Options;
 
 public sealed class HealthCheckUrl

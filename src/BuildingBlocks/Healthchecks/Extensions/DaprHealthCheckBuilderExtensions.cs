@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks.Extensions;
+﻿namespace Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks.Extensions;
 
 public static class DaprHealthCheckBuilderExtensions
 {
