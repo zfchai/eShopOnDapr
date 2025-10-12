@@ -15,10 +15,10 @@ spec:
     secretKeyRef:
       name: Smtp.User
       key: Smtp.User
-  #- name: password
-  #  secretKeyRef:
-  #    name: Smtp.Password
-  #    key: Smtp.Password
+  - name: password
+    secretKeyRef:
+     name: Smtp.Password
+     key: Smtp.Password
   - name: skipTLSVerify
     value: true
 auth:
