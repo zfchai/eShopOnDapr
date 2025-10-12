@@ -13,7 +13,7 @@ public interface IOrderingProcessActor : IActor
 
     Task NotifyStockConfirmedAsync();
 
-    Task NotifyStockRejectedAsync(List<int> rejectedProductIds);
+    Task NotifyStockRejectedAsync(List<string> rejectedProductIds);
 
     Task NotifyPaymentSucceededAsync();
 

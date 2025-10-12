@@ -86,7 +86,7 @@ public class OrderingProcessActor(
         }
     }
 
-    public async Task NotifyStockRejectedAsync(List<int> rejectedProductIds)
+    public async Task NotifyStockRejectedAsync(List<string> rejectedProductIds)
     {
         var statusChanged = await TryUpdateOrderStatusAsync(OrderStatus.AwaitingStockValidation, OrderStatus.Cancelled);
         if (statusChanged)
@@ -192,12 +192,13 @@ public class OrderingProcessActor(
             "Received {Actor}[{ActorId}] reminder: {Reminder}",
             nameof(OrderingProcessActor), OrderId, reminderName);
 
+        var rejectedProductIds = JsonSerializer.Deserialize<List<string>>(Encoding.UTF8.GetString(state));
+
         return reminderName switch
         {
             GracePeriodElapsedReminder => OnGracePeriodElapsedAsync(),
             StockConfirmedReminder => OnStockConfirmedSimulatedWorkDoneAsync(),
-            StockRejectedReminder => OnStockRejectedSimulatedWorkDoneAsync(
-                JsonSerializer.Deserialize<List<int>>(Encoding.UTF8.GetString(state))!),
+            StockRejectedReminder => OnStockRejectedSimulatedWorkDoneAsync(rejectedProductIds!),
             PaymentSucceededReminder => OnPaymentSucceededSimulatedWorkDoneAsync(),
             PaymentFailedReminder => OnPaymentFailedSimulatedWorkDoneAsync(),
             _ => Task.CompletedTask
@@ -233,7 +234,7 @@ public class OrderingProcessActor(
             order.BuyerId));
     }
 
-    public async Task OnStockRejectedSimulatedWorkDoneAsync(List<int> rejectedProductIds)
+    public async Task OnStockRejectedSimulatedWorkDoneAsync(List<string> rejectedProductIds)
     {
         var order = await StateManager.GetStateAsync<OrderState>(OrderDetailsStateName);
 

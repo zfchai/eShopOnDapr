@@ -3,11 +3,11 @@
 
 public class OrderItemResp 
 {
-    public int Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     public Guid OrderId { get; set; }
-    public int ProductId { get; set; }
-    public string ProductName { get; set; } = null!;
+    public string ProductId { get; set; } = string.Empty;
+    public string ProductName { get; set; } = string.Empty;
     public decimal UnitPrice { get; set; }
     public int Units { get; set; }
-    public string PictureFileName { get; set; } = null!;
+    public string PictureFileName { get; set; } = string.Empty;
 }

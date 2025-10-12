@@ -1,3 +1,3 @@
 ﻿namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Models;
 
-public record CatalogItem(int Id, string Name, decimal Price, string PictureFileName);
+public record CatalogItem(string Id, string Name, decimal Price, string PictureFileName);

@@ -1,7 +1,7 @@
 ﻿namespace Microsoft.eShopOnDapr.BlazorClient.Ordering;
 
 public record OrderItem(
-    int ProductId,
+    string ProductId,
     string ProductName,
     decimal UnitPrice,
     int Units,

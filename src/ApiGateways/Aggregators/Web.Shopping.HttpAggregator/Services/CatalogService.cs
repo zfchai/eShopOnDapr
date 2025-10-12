@@ -4,7 +4,7 @@ public class CatalogService(IServiceProvider sp, HttpClient httpClient) : ICatal
 {
     private readonly IBasketService basketService = sp.GetRequiredService<IBasketService>();
 
-    public Task<IEnumerable<CatalogItem>?> GetCatalogItemsAsync(IEnumerable<int> ids)
+    public Task<IEnumerable<CatalogItem>?> GetCatalogItemsAsync(IEnumerable<string> ids)
     {
         var requestUri = $"api/v1/catalog/items/by_ids?ids={string.Join(",", ids)}";
 
