@@ -11,6 +11,7 @@ public sealed class HealthCheckUrl
 
     public Uri GetUri() 
     {
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(UriString);
         return new Uri(UriString);
     }
 }

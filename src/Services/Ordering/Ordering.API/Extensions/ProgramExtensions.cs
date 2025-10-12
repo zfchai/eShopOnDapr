@@ -1,12 +1,13 @@
 ﻿// Only use in this file to avoid conflicts with Microsoft.Extensions.Logging
 using Serilog;
+using Microsoft.eShopOnDapr.Services.API.Abstraction.Ordering.Consts;
 
 namespace Microsoft.eShopOnDapr.Services.Ordering.API.Extensions;
 
 public static class ProgramExtensions
 {
-    private const string AppName = "Ordering API";
-    private const string DbConnString = "ConnectionStrings:OrderingDB";
+    private const string DbConnString = "ConnectionStrings:OrderingDB"; 
+    private const string SecretStore = "eshopondapr-secretstore"; 
 
     public static void ApplyAppsettings(this WebApplicationBuilder builder, string[] args)
     {
@@ -29,9 +30,8 @@ public static class ProgramExtensions
 
     public static void AddCustomConfiguration(this WebApplicationBuilder builder)
     {
-        builder.Configuration.AddDaprSecretStore(
-           "eshopondapr-secretstore",
-           new DaprClientBuilder().Build());
+        var daprClient = new DaprClientBuilder().Build();
+        builder.Configuration.AddDaprSecretStore(SecretStore, daprClient);
     }
 
     public static void AddCustomOptions(this WebApplicationBuilder builder)
@@ -43,13 +43,23 @@ public static class ProgramExtensions
     public static void AddCustomSerilog(this WebApplicationBuilder builder)
     {
         var seqServerUrl = builder.Configuration["SeqServerUrl"];
-
-        Log.Logger = new LoggerConfiguration()
+        if (string.IsNullOrWhiteSpace(seqServerUrl))
+        {
+            Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(builder.Configuration)
             .WriteTo.Console()
-            .WriteTo.Seq(seqServerUrl!)
-            .Enrich.WithProperty("ApplicationName", AppName)
+            .Enrich.WithProperty("ApplicationName", Default.AppName)
             .CreateLogger();
+        }
+        else
+        {
+            Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(builder.Configuration)
+            .WriteTo.Console()
+            .WriteTo.Seq(seqServerUrl)
+            .Enrich.WithProperty("ApplicationName", Default.AppName)
+            .CreateLogger();
+        }
 
         builder.Host.UseSerilog();
     }
@@ -58,7 +68,7 @@ public static class ProgramExtensions
     {
         builder.Services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = $"eShopOnDapr - {AppName}", Version = "v1" });
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = $"eShopOnDapr - {Default.AppName}", Version = "v1" });
 
             var identityUrlExternal = builder.Configuration.GetValue<string>("IdentityUrlExternal");
 
@@ -73,7 +83,7 @@ public static class ProgramExtensions
                         TokenUrl = new Uri($"{identityUrlExternal}/connect/token"),
                         Scopes = new Dictionary<string, string>()
                             {
-                                { "ordering", AppName }
+                                { "ordering", Default.AppName }
                             }
                     }
                 }
@@ -88,7 +98,7 @@ public static class ProgramExtensions
         app.UseSwagger();
         app.UseSwaggerUI(c =>
         {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{AppName} V1");
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{Default.AppName} V1");
             c.OAuthClientId("orderingswaggerui");
             c.OAuthAppName("Ordering Swagger UI");
         });

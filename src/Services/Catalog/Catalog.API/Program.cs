@@ -1,5 +1,5 @@
-﻿
-var appName = "Catalog API";
+﻿using Microsoft.eShopOnDapr.Services.API.Abstraction.Catalog.Consts;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.ApplyAppsettings(args);
@@ -22,8 +22,8 @@ if (app.Environment.IsDevelopment())
     app.UseCustomSwagger();
 }
 
-var pathBase = builder.Configuration["PATH_BASE"];
-if (!string.IsNullOrEmpty(pathBase))
+var pathBase = builder.Configuration["PathBase"];
+if (!string.IsNullOrWhiteSpace(pathBase))
 {
     app.UsePathBase(pathBase);
 }
@@ -43,15 +43,15 @@ app.MapCustomHealthChecks("/hc", "/liveness", UIResponseWriter.WriteHealthCheckU
 
 try
 {
-    app.Logger.LogInformation("Applying database migration ({ApplicationName})...", appName);
+    app.Logger.LogInformation("Applying database migration ({ApplicationName})...", Default.AppName);
     app.ApplyDatabaseMigration();
 
-    app.Logger.LogInformation("Starting web host ({ApplicationName})...", appName);
+    app.Logger.LogInformation("Starting web host ({ApplicationName})...", Default.AppName);
     await app.RunAsync();
 }
 catch (Exception ex)
 {
-    app.Logger.LogCritical(ex, "Host terminated unexpectedly ({ApplicationName})...", appName);
+    app.Logger.LogCritical(ex, "Host terminated unexpectedly ({ApplicationName})...", Default.AppName);
 }
 finally
 {

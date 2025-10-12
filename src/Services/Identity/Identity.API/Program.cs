@@ -1,7 +1,7 @@
-﻿using Microsoft.eShopOnDapr.Services.Identity.API.Extensions;
+﻿using Microsoft.eShopOnDapr.Services.API.Abstraction.Identity.Consts;
+using Microsoft.eShopOnDapr.Services.Identity.API.Extensions;
 using Microsoft.eShopOnDapr.Services.Identity.API.Infrastructure.Data;
 
-var appName = "Identity API";
 var builder = WebApplication.CreateBuilder();
 
 builder.ApplyAppsettings(args);
@@ -23,8 +23,8 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
-var pathBase = builder.Configuration["PATH_BASE"];
-if (!string.IsNullOrEmpty(pathBase))
+var pathBase = builder.Configuration["PathBase"];
+if (!string.IsNullOrWhiteSpace(pathBase))
 {
     app.UsePathBase(pathBase);
 }
@@ -73,7 +73,7 @@ app.MapHealthChecks("/liveness", new HealthCheckOptions
 
 try
 {
-    app.Logger.LogInformation("Seeding database ({ApplicationName})...", appName);
+    app.Logger.LogInformation("Seeding database ({ApplicationName})...", Default.AppName);
 
     // Apply database migration automatically. Note that this approach is not
     // recommended for production scenarios. Consider generating SQL scripts from
@@ -83,14 +83,14 @@ try
         await SeedData.EnsureSeedDataAsync(scope, app.Configuration, app.Logger);
     }
 
-    app.Logger.LogInformation("Starting web host ({ApplicationName})...", appName);
+    app.Logger.LogInformation("Starting web host ({ApplicationName})...", Default.AppName);
     await app.RunAsync();
 
     return 0;
 }
 catch (Exception ex)
 {
-    app.Logger.LogCritical(ex, "Host terminated unexpectedly ({ApplicationName})...", appName);
+    app.Logger.LogCritical(ex, "Host terminated unexpectedly ({ApplicationName})...", Default.AppName);
     return 1;
 }
 finally

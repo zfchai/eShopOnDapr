@@ -12,7 +12,7 @@ var pgPassword = builder.AddParameter("PgPassword", secret: true);
 var maildevUser = builder.AddParameter("MaildevUser");
 var maildevPassword = builder.AddParameter("MaildevPassword", secret: true);
 
-var garnetPassword = builder.AddParameter("GarnetPassword");
+var garnetPassword = builder.AddParameter("GarnetPassword", secret: true);
 
 // Add a dapr statestore and pubsub
 //var stateStore = builder.AddDaprStateStore("eshopondapr-statestore");

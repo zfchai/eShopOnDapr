@@ -1,12 +1,12 @@
-﻿
+﻿using Microsoft.eShopOnDapr.Services.API.Abstraction.Identity.Consts;
 using Serilog;
 
 namespace Microsoft.eShopOnDapr.Services.Identity.API.Extensions;
 
 public static class ProgramExtensions
 {
-    private const string AppName = "Identity API";
     private const string DbConnString = "ConnectionStrings:IdentityDB";
+    private const string SecretStore = "eshopondapr-secretstore";
 
     public static void ApplyAppsettings(this WebApplicationBuilder builder, string[] args)
     {
@@ -30,7 +30,7 @@ public static class ProgramExtensions
     public static void AddCustomConfiguration(this WebApplicationBuilder builder)
     {
         var daprClient = new DaprClientBuilder().Build();
-        builder.Configuration.AddDaprSecretStore("eshopondapr-secretstore", daprClient);
+        builder.Configuration.AddDaprSecretStore(SecretStore, daprClient);
     }
 
     public static void AddCustomOptions(this WebApplicationBuilder builder)
@@ -42,13 +42,23 @@ public static class ProgramExtensions
     public static void AddCustomSerilog(this WebApplicationBuilder builder)
     {
         var seqServerUrl = builder.Configuration["SeqServerUrl"];
-
-        Log.Logger = new LoggerConfiguration()
+        if (string.IsNullOrWhiteSpace(seqServerUrl))
+        {
+            Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(builder.Configuration)
+            .WriteTo.Console()
+            .Enrich.WithProperty("ApplicationName", Default.AppName)
+            .CreateLogger();
+        }
+        else
+        {
+            Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(builder.Configuration)
             .WriteTo.Console()
             .WriteTo.Seq(seqServerUrl)
-            .Enrich.WithProperty("ApplicationName", AppName)
+            .Enrich.WithProperty("ApplicationName", Default.AppName)
             .CreateLogger();
+        }
 
         builder.Host.UseSerilog();
     }
@@ -97,14 +107,14 @@ public static class ProgramExtensions
         builder.Services.AddAuthentication();
     }
 
-    public static void AddCustomHealthChecks(this WebApplicationBuilder builder)
-    {
-        var connectionString = builder.Configuration[DbConnString];
+    public static void AddCustomHealthChecks(this WebApplicationBuilder builder) =>
         builder.Services
             .AddHealthChecks()
             .AddCheck("self", () => HealthCheckResult.Healthy())
-            .AddNpgSql(connectionString, name: "IdentityDB-check", tags: ["IdentityDB"]);
-    }
+            .AddNpgSql(
+                builder.Configuration[DbConnString]!,
+                name: "IdentityDB-check",
+                tags: ["IdentityDB"]);
 
     public static void AddCustomApplicationServices(this WebApplicationBuilder builder)
     {

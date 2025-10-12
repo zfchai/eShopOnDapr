@@ -1,12 +1,11 @@
 // Only use in this file to avoid conflicts with Microsoft.Extensions.Logging
 using Serilog;
+using Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Consts;
 
 namespace Microsoft.eShopOnDapr.Web.Shopping.HttpAggregator.Extensions;
 
 public static class ProgramExtensions
 {
-    private const string AppName = "Shopping Aggregator API";
-
     public static void ApplyAppsettings(this WebApplicationBuilder builder, string[] args) 
     {
         // Retrieve the environmental information of the current application
@@ -29,13 +28,23 @@ public static class ProgramExtensions
     public static void AddCustomSerilog(this WebApplicationBuilder builder)
     {
         var seqServerUrl = builder.Configuration["SeqServerUrl"];
-
-        Log.Logger = new LoggerConfiguration()
+        if (string.IsNullOrWhiteSpace(seqServerUrl))
+        {
+            Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(builder.Configuration)
             .WriteTo.Console()
-            .WriteTo.Seq(seqServerUrl!)
-            .Enrich.WithProperty("ApplicationName", AppName)
+            .Enrich.WithProperty("ApplicationName", Default.AppName)
             .CreateLogger();
+        }
+        else
+        {
+            Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(builder.Configuration)
+            .WriteTo.Console()
+            .WriteTo.Seq(seqServerUrl)
+            .Enrich.WithProperty("ApplicationName", Default.AppName)
+            .CreateLogger();
+        }
 
         builder.Host.UseSerilog();
     }
@@ -44,7 +53,7 @@ public static class ProgramExtensions
     {
         builder.Services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = $"eShopOnDapr - {AppName}", Version = "v1" });
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = $"eShopOnDapr - {Default.AppName}", Version = "v1" });
 
             var identityUrlExternal = builder.Configuration.GetValue<string>("IdentityUrlExternal");
 
@@ -59,7 +68,7 @@ public static class ProgramExtensions
                         TokenUrl = new Uri($"{identityUrlExternal}/connect/token"),
                         Scopes = new Dictionary<string, string>()
                         {
-                            { "shoppingaggr-api", AppName }
+                            { "shoppingaggr-api", Default.AppName }
                         }
                     }
                 }
@@ -74,7 +83,7 @@ public static class ProgramExtensions
         app.UseSwagger();
         app.UseSwaggerUI(c =>
         {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{AppName} V1");
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{Default.AppName} V1");
             c.OAuthClientId("shoppingaggrswaggerui");
             c.OAuthAppName("Shopping Aggregator Swagger UI");
         });
@@ -110,6 +119,18 @@ public static class ProgramExtensions
     {
         List<HealthCheckUrl> healthCheckUrls =
         [
+            new HealthCheckUrl
+            {
+                UriString = builder.Configuration["PaymentUrlHC"]!,
+                Name = "paymentapi-check",
+                Tags = ["paymentapi"]
+            },
+            new HealthCheckUrl
+            {
+                UriString = builder.Configuration["OrderingUrlHC"]!,
+                Name = "orderingapi-check",
+                Tags = ["orderingapi"]
+            },
             new HealthCheckUrl
             {
                 UriString = builder.Configuration["CatalogUrlHC"]!,
