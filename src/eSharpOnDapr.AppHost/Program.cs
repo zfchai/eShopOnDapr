@@ -1,5 +1,5 @@
-using Aspire.Hosting.Dapr;
 using Aspire.Hosting.MailDev;
+using CommunityToolkit.Aspire.Hosting.Dapr;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,14 +13,23 @@ var maildevUser = builder.AddParameter("MaildevUser");
 var maildevPassword = builder.AddParameter("MaildevPassword", secret: true);
 
 // Add a dapr statestore and pubsub
-var stateStore = builder.AddDaprStateStore("eshopondapr-statestore");
-var pubsub = builder.AddDaprPubSub("eshopondapr-pubsub");
-var secretStore = builder.AddDaprComponent("eshopondapr-secretstore", "secretstores.local.file");
+//var stateStore = builder.AddDaprStateStore("eshopondapr-statestore");
+//var pubsub = builder.AddDaprPubSub("eshopondapr-pubsub");
+//var secretStore = builder.AddDaprComponent("eshopondapr-secretstore", "secretstores.local.file");
 
 var maildev = builder
-      .AddMailDev("maildev", options => options
-      .WithPorts(httpPort: 5500, smtpPort: 1025)
-      .WithAuth(maildevUser.Resource.Value, maildevPassword.Resource.Value));
+      .AddMailDev("maildev", async options => 
+      {
+          var user = await maildevUser.Resource.GetValueAsync(default);
+          var pwd = await maildevPassword.Resource.GetValueAsync(default);
+
+          ArgumentNullException.ThrowIfNullOrWhiteSpace(user, "MaildevUser");
+          ArgumentNullException.ThrowIfNullOrWhiteSpace(pwd, "MaildevPassword");
+
+          options
+              .WithPorts(httpPort: 5500, smtpPort: 1025)
+              .WithAuth(user, pwd);
+      });
 
 var rabbitmq = builder
       .AddRabbitMQ(name:"rabbitmq", port: 5672)
@@ -77,16 +86,16 @@ var blazorClientHost = builder.AddProject<Projects.BlazorClient_Host>("blazor-cl
 var basketService = builder.AddProject<Projects.Basket_API>("basket-api")
       .WithDaprSidecar()
       .WithReference(redis)
-      .WithReference(stateStore)
+      //.WithReference(stateStore)
       .WithReference(identityService)
-      .WithReference(pubsub)
+      //.WithReference(pubsub)
       .WithReference(rabbitmq)
       .WithReference(seq);
 
 var catalogService = builder.AddProject<Projects.Catalog_API>("catalog-api")
       .WithDaprSidecar()
       .WithReference(maildev)
-      .WithReference(secretStore)
+      //.WithReference(secretStore)
       .WithReference(catalogDb);
 
 var orderingService = builder.AddProject<Projects.Ordering_API>("ordering-api")
@@ -95,7 +104,7 @@ var orderingService = builder.AddProject<Projects.Ordering_API>("ordering-api")
 
 var paymentService = builder.AddProject<Projects.Payment_API>("payment-api")
       .WithDaprSidecar()
-      .WithReference(pubsub)
+      //.WithReference(pubsub)
       .WithReference(rabbitmq)
       .WithReference(seq);
 

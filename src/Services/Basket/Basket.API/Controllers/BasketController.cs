@@ -3,7 +3,9 @@
 [Route("api/v1/[controller]")]
 [Authorize(Policy = "ApiScope")]
 [ApiController]
-public class BasketController(ILogger<BasketController> logger, IIdentityService identityService) : ControllerBase
+public sealed class BasketController(
+    ILogger<BasketController> logger,
+    IIdentityService identityService) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType(typeof(CustomerBasketResp), StatusCodes.Status200OK)]

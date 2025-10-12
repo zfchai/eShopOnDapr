@@ -183,9 +183,9 @@ public class ExternalController(
             filtered.Add(new Claim(JwtClaimTypes.Email, email));
         }
 
-        var user = new ApplicationUser
+        ApplicationUser user = new()
         {
-            UserName = Guid.NewGuid().ToString(),
+            UserName = Guid.CreateVersion7().ToString(),
         };
         var identityResult = await userManager.CreateAsync(user);
         if (!identityResult.Succeeded) throw new Exception(identityResult.Errors.First().Description);

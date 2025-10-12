@@ -21,7 +21,7 @@ public class OrderItem
 
     public OrderItem(OrderItemState state)
     {
-        Id = Guid.NewGuid().ToString();
+        Id = Guid.CreateVersion7().ToString();
         ProductId = state.ProductId;
         ProductName = state.ProductName;
         UnitPrice = state.UnitPrice;

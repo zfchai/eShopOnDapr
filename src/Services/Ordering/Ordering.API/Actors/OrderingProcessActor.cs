@@ -4,8 +4,7 @@ public class OrderingProcessActor(
     ILogger<OrderingProcessActor> logger,
     IOptions<OrderingSetting> settings,
     IEventBus eventBus,
-    ActorHost host
-    ) : Actor(host), IOrderingProcessActor, IRemindable
+    ActorHost host) : Actor(host), IOrderingProcessActor, IRemindable
 {
     private const string OrderDetailsStateName = "OrderDetails";
     private const string OrderStatusStateName = "OrderStatus";

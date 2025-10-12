@@ -3,11 +3,11 @@ namespace Microsoft.eShopOnDapr.BuildingBlocks.Healthchecks.Options;
 
 public sealed class HealthCheckUrl
 {
-    public string UriString { get; set; }
+    public string UriString { get; set; } = string.Empty;
 
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
-    public IEnumerable<string> Tags { get; set; }
+    public IEnumerable<string> Tags { get; set; } = [];
 
     public Uri GetUri() 
     {

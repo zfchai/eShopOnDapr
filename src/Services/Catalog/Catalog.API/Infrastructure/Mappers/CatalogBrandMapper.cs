@@ -6,10 +6,8 @@ internal static class CatalogBrandMapper
 {
     public static CatalogBrand From(this CatalogBrandReq req)
     {
-        return new CatalogBrand(
-            req.Id ?? Guid.NewGuid().ToString(),
-            req.Name
-        );
+        string id = req.Id.IfNullOrWhiteSpaceAs(Guid.CreateVersion7().ToString());
+        return new CatalogBrand(id, req.Name);
     }
 
     public static CatalogBrandResp To(this CatalogBrand entity)

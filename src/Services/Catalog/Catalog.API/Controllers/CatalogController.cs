@@ -4,7 +4,9 @@ namespace Microsoft.eShopOnDapr.Services.Catalog.API.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public sealed class CatalogController(ILogger<CatalogController> logger, ICatalogService catalogService) : ControllerBase
+public sealed class CatalogController(
+    ILogger<CatalogController> logger, 
+    ICatalogService catalogService) : ControllerBase
 {
     [HttpGet("brands")]
     [ProducesResponseType(typeof(IAsyncEnumerable<CatalogBrandResp>), StatusCodes.Status200OK)]

@@ -35,7 +35,7 @@ public class IdentityService(ILogger<IdentityService> logger, IServiceProvider s
         }
 
         var eventRequestId = Guid.TryParse(requestId, out Guid parsedRequestId)
-            ? parsedRequestId : Guid.NewGuid();
+            ? parsedRequestId : Guid.CreateVersion7();
 
         var eventMessage = new UserCheckoutAcceptedIntegrationEvent(
             userId,
