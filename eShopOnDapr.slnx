@@ -1,0 +1,66 @@
+<Solution>
+  <Folder Name="/dapr/" />
+  <Folder Name="/dapr/components/">
+    <File Path="dapr/components/eshop-email.yaml" />
+    <File Path="dapr/components/eshop-pubsub.yaml" />
+    <File Path="dapr/components/eshop-secrets.json" />
+    <File Path="dapr/components/eshop-secretstore.yaml" />
+    <File Path="dapr/components/eshop-statestore.yaml" />
+  </Folder>
+  <Folder Name="/dapr/configuration/">
+    <File Path="dapr/configuration/eshop-config.yaml" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/eSharpOnDapr.AppHost/eSharpOnDapr.AppHost.csproj" />
+  </Folder>
+  <Folder Name="/src/ApiGateways/" />
+  <Folder Name="/src/ApiGateways/Aggregators/">
+    <Project Path="src/ApiGateways/Aggregators/Web.Shopping.HttpAggregator/Web.Shopping.HttpAggregator.csproj" />
+  </Folder>
+  <Folder Name="/src/ApiGateways/Envoy/">
+    <File Path="src/ApiGateways/Envoy/envoy.yaml" />
+  </Folder>
+  <Folder Name="/src/BuildingBlocks/" />
+  <Folder Name="/src/BuildingBlocks/EventBus/">
+    <Project Path="src/BuildingBlocks/EventBus/EventBus.csproj" />
+  </Folder>
+  <Folder Name="/src/BuildingBlocks/Healthchecks/">
+    <Project Path="src/BuildingBlocks/Healthchecks/Healthchecks.csproj" />
+  </Folder>
+  <Folder Name="/src/Foundations/">
+    <Project Path="src/Foundations/Services.API.Abstraction/Services.API.Abstraction.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/" />
+  <Folder Name="/src/Services/Basket/">
+    <Project Path="src/Services/Basket/Basket.API/Basket.API.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/Catalog/">
+    <Project Path="src/Services/Catalog/Catalog.API/Catalog.API.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/Identity/">
+    <Project Path="src/Services/Identity/Identity.API/Identity.API.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/Ordering/">
+    <Project Path="src/Services/Ordering/Ordering.API/Ordering.API.csproj" />
+  </Folder>
+  <Folder Name="/src/Services/Payment/">
+    <Project Path="src/Services/Payment/Payment.API/Payment.API.csproj" />
+  </Folder>
+  <Folder Name="/src/Web/">
+    <Project Path="src/Web/BlazorClient.Host/BlazorClient.Host.csproj" />
+    <Project Path="src/Web/BlazorClient/BlazorClient.csproj" />
+    <Project Path="src/Web/WebStatus/WebStatus.csproj" />
+  </Folder>
+  <Project Path="docker-compose.dcproj">
+    <BuildDependency Project="src/ApiGateways/Aggregators/Web.Shopping.HttpAggregator/Web.Shopping.HttpAggregator.csproj" />
+    <BuildDependency Project="src/Services/Basket/Basket.API/Basket.API.csproj" />
+    <BuildDependency Project="src/Services/Catalog/Catalog.API/Catalog.API.csproj" />
+    <BuildDependency Project="src/Services/Identity/Identity.API/Identity.API.csproj" />
+    <BuildDependency Project="src/Services/Ordering/Ordering.API/Ordering.API.csproj" />
+    <BuildDependency Project="src/Services/Payment/Payment.API/Payment.API.csproj" />
+    <BuildDependency Project="src/Web/BlazorClient.Host/BlazorClient.Host.csproj" />
+    <BuildDependency Project="src/Web/BlazorClient/BlazorClient.csproj" />
+    <BuildDependency Project="src/Web/WebStatus/WebStatus.csproj" />
+    <Build />
+  </Project>
+</Solution>
