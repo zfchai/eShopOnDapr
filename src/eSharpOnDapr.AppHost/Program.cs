@@ -20,7 +20,7 @@ var garnetPassword = builder.AddParameter("GarnetPassword", secret: true);
 //var secretStore = builder.AddDaprComponent("eshopondapr-secretstore", "secretstores.local.file");
 
 var maildev = builder
-      .AddMailDev("maildev", async options => 
+      .AddMailDev("maildev", async options =>
       {
           var user = await maildevUser.Resource.GetValueAsync(default);
           var pwd = await maildevPassword.Resource.GetValueAsync(default);
@@ -34,17 +34,22 @@ var maildev = builder
       });
 
 var rabbitmq = builder
-      .AddRabbitMQ(name:"rabbitmq", port: 5672)
+      .AddRabbitMQ(name: "rabbitmq", port: 5672)
       .WithImageTag("3-management-alpine")
       .WithDataVolume("eshorp_rabbitmq_data");
 
 //var redis = builder
-//      .AddRedis("redis", port: 5379)
-//      .WithImageTag("7.4.0-alpine3.20")
-//      .WithDataVolume("eshorp_redis_data");
+//    .AddRedis("redis", port: 6379)
+//    .WithImageTag("7.4-alpine3.21")
+//    .WithDataVolume("redis7_data")
+//    .WithRedisInsight(
+//       c => c.WithImage("redis/redisinsight")
+//             .WithImageTag("2.66")
+//             .WithHostPort(62975)
+//    );
 
 var garnet = builder
-      .AddGarnet("cache", port: 6379, password: garnetPassword)
+      .AddGarnet("garnet", port: 6379, password: garnetPassword)
       .WithDataVolume("eshorp_garnet_data");
 
 // 手动添加 RedisInsight（用于管理 Garnet）
@@ -58,21 +63,22 @@ var redisInsight = builder
     .WithEnvironment("REDISINSIGHT_PORT", "5540");
 
 var seq = builder
-      .AddSeq(name:"seq", port: 5340)
+      .AddSeq(name: "seq", port: 5340)
       .WithImageTag("latest")
       .WithEnvironment("ACCEPT_EULA", "Y")
       .WithDataVolume("eshorp_seq_data");
 
-builder.Services.AddHttpClient("ZipkinExporter", 
+builder.Services.AddHttpClient("ZipkinExporter",
     configureClient: (client) => client.DefaultRequestHeaders.Add("X-MyCustomHeader", "value"));
 
 var postgres = builder
       .AddPostgres("postgresql", pgUser, pgPassword, port: 15432)
-      .WithImageTag("16.6-alpine3.20")
+      .WithImageTag("17-alpine3.21")
       .WithDataVolume("eshorp_postgres_data")
       .WithPgAdmin(
-         c => c.WithImage("dpage/pgadmin4:9.2")
-               .WithHostPort(5050)
+         c => c.WithImage("dpage/pgadmin4")
+             .WithImageTag("9.8")
+             .WithHostPort(5050)
       );
 
 var catalogDb = postgres.AddDatabase("CatalogDb");
@@ -102,7 +108,7 @@ var blazorClientHost = builder.AddProject<Projects.BlazorClient_Host>("blazor-cl
 var basketService = builder.AddProject<Projects.Basket_API>("basket-api")
       .WithDaprSidecar()
       //.WithReference(redis) 
-      .WithReference(garnet) 
+      .WithReference(garnet)
       //.WithReference(stateStore)
       .WithReference(identityService)
       //.WithReference(pubsub)
