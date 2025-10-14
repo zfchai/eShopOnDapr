@@ -8,17 +8,17 @@ spec:
   version: v1
   metadata:
   - name: host
-    value: maildev
+    value: "maildev"
   - name: port
-    value: 1025
+    value: "1025"
   - name: user
     secretKeyRef:
       name: Smtp.User
       key: Smtp.User
   - name: password
     secretKeyRef:
-     name: Smtp.Password
-     key: Smtp.Password
+      name: Smtp.Password
+      key: Smtp.Password
   - name: skipTLSVerify
     value: true
 auth:
