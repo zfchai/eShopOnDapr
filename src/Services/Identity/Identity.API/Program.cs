@@ -5,7 +5,7 @@ using Microsoft.eShopOnDapr.Services.Identity.API.Infrastructure.Data;
 var builder = WebApplication.CreateBuilder();
 
 builder.ApplyAppsettings(args);
-//builder.AddCustomConfiguration();
+builder.AddCustomConfiguration();
 builder.AddCustomOptions();
 builder.AddCustomSerilog();
 builder.AddCustomMvc();
