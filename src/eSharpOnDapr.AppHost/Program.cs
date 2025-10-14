@@ -81,9 +81,9 @@ var postgres = builder
              .WithHostPort(5050)
       );
 
-var catalogDb = postgres.AddDatabase("CatalogDb");
-var identityDb = postgres.AddDatabase("IdentityDb");
-var orderingDb = postgres.AddDatabase("OrderingDb");
+var catalogDb = postgres.AddDatabase("CatalogDb", "eShorpCatalog");
+var identityDb = postgres.AddDatabase("IdentityDb", "eShorpIdentity");
+var orderingDb = postgres.AddDatabase("OrderingDb", "eShorpOrdering");
 
 var identityService = builder.AddProject<Projects.Identity_API>("identity-api")
       .WithEnvironment("ASPNETCORE_ENVIRONMENT", "Development")
