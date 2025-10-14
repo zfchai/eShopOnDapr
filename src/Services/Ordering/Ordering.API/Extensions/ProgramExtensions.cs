@@ -130,15 +130,6 @@ public static class ProgramExtensions
         });
     }
 
-    public static void AddCustomHealthChecks(this WebApplicationBuilder builder) =>
-        builder.Services.AddHealthChecks()
-            .AddCheck("self", () => HealthCheckResult.Healthy())
-            .AddDapr()
-            .AddNpgSql(
-                builder.Configuration[DbConnString]!,
-                name: "OrderingDB-check",
-                tags: ["orderdb"]);
-
     public static void AddCustomApplicationServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<IEventBus, DaprEventBus>();
@@ -153,9 +144,12 @@ public static class ProgramExtensions
         builder.Services.AddScoped<IOrderingProcessEventService, OrderingProcessEventService>();
     }
 
-    public static void AddCustomDatabase(this WebApplicationBuilder builder) =>
-        builder.Services.AddDbContext<OrderingDbContext>(
-            options => options.UseNpgsql(builder.Configuration[DbConnString]!));
+    public static void AddCustomDatabase(this WebApplicationBuilder builder)
+    {
+        var connString = builder.Configuration[DbConnString];
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(connString);
+        builder.Services.AddDbContext<OrderingDbContext>(options => options.UseNpgsql(connString));
+    }
 
     public static void ApplyDatabaseMigration(this WebApplication app)
     {
@@ -192,6 +186,19 @@ public static class ProgramExtensions
         }
 
         return Policy.NoOp();
+    }
+
+    public static void AddCustomHealthChecks(this WebApplicationBuilder builder)
+    {
+        var connString = builder.Configuration[DbConnString];
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(connString);
+        builder.Services.AddHealthChecks()
+            .AddCheck("self", () => HealthCheckResult.Healthy())
+            .AddDapr()
+            .AddNpgSql(
+                connectionString: connString,
+                name: "OrderingDB-check",
+                tags: ["orderdb"]);
     }
 
     #region CustomOptions

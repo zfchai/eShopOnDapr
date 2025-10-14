@@ -7,10 +7,10 @@ builder.AddCustomConfiguration();
 builder.AddCustomSerilog();
 builder.AddCustomSwagger();
 builder.AddCustomAuthentication();
-builder.AddCustomAuthorization(); 
+builder.AddCustomAuthorization();
+builder.AddCustomDatabase();
 builder.AddCustomHealthChecks();
 builder.AddCustomApplicationServices();
-builder.AddCustomDatabase();
 
 builder.Services.AddDaprClient();
 builder.Services.AddControllers();

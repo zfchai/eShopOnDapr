@@ -70,8 +70,9 @@ public static class ProgramExtensions
 
     public static void AddCustomDatabase(this WebApplicationBuilder builder)
     {
-        var connectionString = builder.Configuration[DbConnString];
-        builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
+        var connString = builder.Configuration[DbConnString];
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(connString);
+        builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connString));
     }
 
     public static void AddCustomIdentity(this WebApplicationBuilder builder) =>
@@ -107,14 +108,18 @@ public static class ProgramExtensions
         builder.Services.AddAuthentication();
     }
 
-    public static void AddCustomHealthChecks(this WebApplicationBuilder builder) =>
+    public static void AddCustomHealthChecks(this WebApplicationBuilder builder)
+    {
+        var connString = builder.Configuration[DbConnString];
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(connString);
         builder.Services
             .AddHealthChecks()
             .AddCheck("self", () => HealthCheckResult.Healthy())
             .AddNpgSql(
-                builder.Configuration[DbConnString]!,
+                connectionString: connString,
                 name: "IdentityDB-check",
                 tags: ["IdentityDB"]);
+    }
 
     public static void AddCustomApplicationServices(this WebApplicationBuilder builder)
     {
