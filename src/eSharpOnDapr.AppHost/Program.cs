@@ -12,12 +12,13 @@ var pgPassword = builder.AddParameter("PgPassword", secret: true);
 var maildevUser = builder.AddParameter("MaildevUser");
 var maildevPassword = builder.AddParameter("MaildevPassword", secret: true);
 
+var garnetUser = builder.AddParameter("GarnetUser");
 var garnetPassword = builder.AddParameter("GarnetPassword", secret: true);
 
 // Add a dapr statestore and pubsub
-//var stateStore = builder.AddDaprStateStore("eshopondapr-statestore");
-//var pubsub = builder.AddDaprPubSub("eshopondapr-pubsub");
-//var secretStore = builder.AddDaprComponent("eshopondapr-secretstore", "secretstores.local.file");
+var stateStore = builder.AddDaprStateStore("eshopondapr-statestore");
+var pubsub = builder.AddDaprPubSub("eshopondapr-pubsub");
+var secretStore = builder.AddDaprComponent("eshopondapr-secretstore", "secretstores.local.file");
 
 var maildev = builder
       .AddMailDev("maildev", async options =>
@@ -73,7 +74,7 @@ builder.Services.AddHttpClient("ZipkinExporter",
 
 var postgres = builder
       .AddPostgres("postgresql", pgUser, pgPassword, port: 15432)
-      .WithImageTag("17-alpine3.21")
+      .WithImageTag("18.0-alpine")
       .WithDataVolume("eshorp_postgres_data")
       .WithPgAdmin(
          c => c.WithImage("dpage/pgadmin4")
@@ -106,19 +107,19 @@ var blazorClientHost = builder.AddProject<Projects.BlazorClient_Host>("blazor-cl
       .WithEnvironment("SeqServerUrl", "http://seq");
 
 var basketService = builder.AddProject<Projects.Basket_API>("basket-api")
-      .WithDaprSidecar()
+      .WithDaprSidecar(sidecar => sidecar
+          .WithReference(stateStore)
+          .WithReference(pubsub))
       //.WithReference(redis) 
       .WithReference(garnet)
-      //.WithReference(stateStore)
       .WithReference(identityService)
-      //.WithReference(pubsub)
       .WithReference(rabbitmq)
       .WithReference(seq);
 
 var catalogService = builder.AddProject<Projects.Catalog_API>("catalog-api")
-      .WithDaprSidecar()
+      .WithDaprSidecar(sidecar => sidecar
+          .WithReference(secretStore))
       .WithReference(maildev)
-      //.WithReference(secretStore)
       .WithReference(catalogDb);
 
 var orderingService = builder.AddProject<Projects.Ordering_API>("ordering-api")
@@ -126,8 +127,8 @@ var orderingService = builder.AddProject<Projects.Ordering_API>("ordering-api")
       .WithReference(orderingDb);
 
 var paymentService = builder.AddProject<Projects.Payment_API>("payment-api")
-      .WithDaprSidecar()
-      //.WithReference(pubsub)
+      .WithDaprSidecar(sidecar => sidecar
+          .WithReference(pubsub))
       .WithReference(rabbitmq)
       .WithReference(seq);
 
