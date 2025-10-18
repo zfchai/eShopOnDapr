@@ -1,97 +1,99 @@
 ﻿namespace Microsoft.eShopOnDapr.Services.Identity.API.Infrastructure.Data;
 
-internal class SeedData
+/// <summary>
+/// 初始化种子数据
+/// </summary>
+internal sealed class SeedData
 {
+    private static readonly List<ApplicationUser> _applicationUser =
+    [
+        new ApplicationUser
+        {
+            UserName = "alice",
+            Email = "AliceSmith@email.com",
+            EmailConfirmed = true,
+            CardHolderName = "Alice Smith",
+            CardNumber = "4012888888881881",
+            CardType = 1,
+            City = "Redmond",
+            Country = "U.S.",
+            Expiration = "12/20",
+            Id = Guid.CreateVersion7().ToString(),
+            LastName = "Smith",
+            Name = "Alice",
+            PhoneNumber = "1234567890",
+            ZipCode = "98052",
+            State = "WA",
+            Street = "15703 NE 61st Ct",
+            SecurityNumber = "123"
+        },
+        new ApplicationUser
+        {
+            UserName = "bob",
+            Email = "BobSmith@email.com",
+            EmailConfirmed = true,
+            CardHolderName = "Bob Smith",
+            CardNumber = "4012888888881881",
+            CardType = 1,
+            City = "Redmond",
+            Country = "U.S.",
+            Expiration = "12/20",
+            Id = Guid.CreateVersion7().ToString(),
+            LastName = "Smith",
+            Name = "Bob",
+            PhoneNumber = "1234567890",
+            ZipCode = "98052",
+            State = "WA",
+            Street = "15703 NE 61st Ct",
+            SecurityNumber = "456"
+        }
+    ];
+
     public static async Task EnsureSeedDataAsync(IServiceScope scope, IConfiguration configuration, ILogger logger)
     {
         var retryPolicy = CreateRetryPolicy(configuration, logger);
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        List<ApplicationUser> users =
-        [
-            new ApplicationUser
-            {
-                UserName = "alice",
-                Email = "AliceSmith@email.com",
-                EmailConfirmed = true,
-                CardHolderName = "Alice Smith",
-                CardNumber = "4012888888881881",
-                CardType = 1,
-                City = "Redmond",
-                Country = "U.S.",
-                Expiration = "12/20",
-                Id = Guid.CreateVersion7().ToString(),
-                LastName = "Smith",
-                Name = "Alice",
-                PhoneNumber = "1234567890",
-                ZipCode = "98052",
-                State = "WA",
-                Street = "15703 NE 61st Ct",
-                SecurityNumber = "123"
-            },
-            new ApplicationUser
-            {
-                UserName = "bob",
-                Email = "BobSmith@email.com",
-                EmailConfirmed = true,
-                CardHolderName = "Bob Smith",
-                CardNumber = "4012888888881881",
-                CardType = 1,
-                City = "Redmond",
-                Country = "U.S.",
-                Expiration = "12/20",
-                Id = Guid.CreateVersion7().ToString(),
-                LastName = "Smith",
-                Name = "Bob",
-                PhoneNumber = "1234567890",
-                ZipCode = "98052",
-                State = "WA",
-                Street = "15703 NE 61st Ct",
-                SecurityNumber = "456"
-            }
-        ];
-
         await retryPolicy.ExecuteAsync(async () =>
         {
             await context.Database.MigrateAsync();
-
-            var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
             // 批量创建用户
-            foreach (var user in users)
+            foreach (var user in _applicationUser)
             {
-                await CreateUserAsync(userMgr, logger, "Pass123$", user);
+                await CreateUserAsync(userManager, logger, "Pass123$", user);
             }
         });
-    }
 
-    private static async Task CreateUserAsync(UserManager<ApplicationUser> userMgr, ILogger logger, string password, ApplicationUser appUser)
-    {
-        var user = await userMgr.FindByNameAsync(appUser.UserName);
-        if (user == null)
+        static async Task CreateUserAsync(UserManager<ApplicationUser> userManager, ILogger logger, string password, ApplicationUser appUser)
         {
-            var result = await userMgr.CreateAsync(user, password);
-            if (!result.Succeeded)
+            var user = await userManager.FindByNameAsync(appUser.UserName);
+            //var user = await userMgr.FindByEmailAsync(appUser.Email);
+            if (user == null)
             {
-                throw new Exception(result.Errors.First().Description);
-            }
+                var result = await userManager.CreateAsync(appUser, password);
+                if (!result.Succeeded)
+                {
+                    throw new Exception(result.Errors.First().Description);
+                }
 
-            logger.LogDebug($"{appUser.UserName} created");
-        }
-        else
-        {
-            logger.LogDebug($"{appUser.UserName} already exists");
+                logger.LogDebug($"{appUser.UserName} created");
+            }
+            else
+            {
+                logger.LogDebug($"{appUser.UserName} already exists");
+            }
         }
     }
-
 
     private static AsyncPolicy CreateRetryPolicy(IConfiguration configuration, ILogger logger)
     {
-        bool.TryParse(configuration["RetryMigrations"], out bool retryMigrations);
+        bool isok = bool.TryParse(configuration["RetryMigrations"], out bool retryMigrations);
 
         // Only use a retry policy if configured to do so.
         // When running in an orchestrator/K8s, it will take care of restarting failed services.
-        if (retryMigrations)
+        if (isok && retryMigrations)
         {
             return Policy.Handle<Exception>().
                 WaitAndRetryForeverAsync(

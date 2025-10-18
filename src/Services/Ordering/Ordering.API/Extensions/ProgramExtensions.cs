@@ -32,21 +32,8 @@ public static class ProgramExtensions
     {
         //var daprClient = new DaprClientBuilder().Build();
         //builder.Configuration.AddDaprSecretStore(SecretStore, daprClient);
-
-        bool isAdded = builder.Configuration.IsSecretStoreAdded(SecretStore);
-        if (!isAdded)
-        {
-            bool isExist = builder.Configuration.IsDaprSecretStoreAdded(SecretStore);
-            if (!isExist)
-            {
-                builder.Configuration.TryAddDaprSecretStore(SecretStore);
-            }
-        }
-    }
-
-    public static void AddCustomOptions(this WebApplicationBuilder builder)
-    {
         // Add custom extension configuration
+        
 
     }
 

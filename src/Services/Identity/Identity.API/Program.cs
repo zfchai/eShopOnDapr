@@ -6,7 +6,6 @@ var builder = WebApplication.CreateBuilder();
 
 builder.ApplyAppsettings(args);
 builder.AddCustomConfiguration();
-builder.AddCustomOptions();
 builder.AddCustomSerilog();
 builder.AddCustomMvc();
 builder.AddCustomDatabase();

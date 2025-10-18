@@ -5,6 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
+// 或者通过环境变量
+builder.Configuration.AddEnvironmentVariables();
+
 // Add a parameter
 var pgUser = builder.AddParameter("PgUser");
 var pgPassword = builder.AddParameter("PgPassword", secret: true);
@@ -15,7 +18,7 @@ var maildevPassword = builder.AddParameter("MaildevPassword", secret: true);
 var garnetUser = builder.AddParameter("GarnetUser");
 var garnetPassword = builder.AddParameter("GarnetPassword", secret: true);
 
-// Add a dapr statestore and pubsub
+// Add a dapr statestore/pubsub/secret
 var stateStore = builder.AddDaprStateStore("eshopondapr-statestore");
 var pubsub = builder.AddDaprPubSub("eshopondapr-pubsub");
 var secretStore = builder.AddDaprComponent("eshopondapr-secretstore", "secretstores.local.file");
@@ -32,11 +35,12 @@ var maildev = builder
           options
               .WithPorts(httpPort: 5500, smtpPort: 1025)
               .WithAuth(user, pwd);
-      });
-
+      })
+      .WithImageTag("2.1.0");
+       
 var rabbitmq = builder
       .AddRabbitMQ(name: "rabbitmq", port: 5672)
-      .WithImageTag("3-management-alpine")
+      .WithImageTag("4.1.4-management-alpine")
       .WithDataVolume("eshorp_rabbitmq_data");
 
 //var redis = builder
@@ -51,6 +55,7 @@ var rabbitmq = builder
 
 var garnet = builder
       .AddGarnet("garnet", port: 6379, password: garnetPassword)
+      .WithImageTag("1.0.65")
       .WithDataVolume("eshorp_garnet_data");
 
 // 手动添加 RedisInsight（用于管理 Garnet）
@@ -73,13 +78,13 @@ builder.Services.AddHttpClient("ZipkinExporter",
     configureClient: (client) => client.DefaultRequestHeaders.Add("X-MyCustomHeader", "value"));
 
 var postgres = builder
-      .AddPostgres("postgresql", pgUser, pgPassword, port: 15432)
+      .AddPostgres("pgdata", pgUser, pgPassword, port: 15432)
       .WithImageTag("18.0-alpine")
       .WithDataVolume("eshorp_postgres_data")
       .WithPgAdmin(
          c => c.WithImage("dpage/pgadmin4")
-             .WithImageTag("9.8")
-             .WithHostPort(5050)
+               .WithImageTag("9.9.0")
+               .WithHostPort(5050)
       );
 
 var catalogDb = postgres.AddDatabase("CatalogDb", "eShorpCatalog");

@@ -7,6 +7,7 @@
       "launchBrowser": true,
       "applicationUrl": "http://localhost:15176",
       "environmentVariables": {
+        "CONTAINER_RUNTIME": "podman",
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPIRE_ALLOW_UNSECURED_TRANSPORT": "true",
         "DOTNET_ENVIRONMENT": "Development",
