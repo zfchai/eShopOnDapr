@@ -78,8 +78,8 @@ builder.Services.AddHttpClient("ZipkinExporter",
     configureClient: (client) => client.DefaultRequestHeaders.Add("X-MyCustomHeader", "value"));
 
 var postgres = builder
-      .AddPostgres("pgdata", pgUser, pgPassword, port: 15432)
-      .WithImageTag("18.0-alpine")
+      .AddPostgres("postgresql", pgUser, pgPassword, port: 15432)
+      .WithImageTag("18.0-alpine3.22")
       .WithDataVolume("eshorp_postgres_data")
       .WithPgAdmin(
          c => c.WithImage("dpage/pgadmin4")
